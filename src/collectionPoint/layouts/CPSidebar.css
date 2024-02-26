@@ -1,0 +1,21 @@
+a.active{
+    margin: 0px;
+    width: 100%;
+    padding: 20px;
+    background-color: rgba(241, 236, 236, 0.17);
+    color: white;
+    transition-duration: 300ms;
+}
+
+@media (prefers-color-scheme: dark) {
+    a.active{
+        margin: 0px;
+        width: 100%;
+        padding: 20px;
+        --tw-bg-opacity: 1;
+        background-color: rgb(59 130 246 / var(--tw-bg-opacity));
+        color: white;
+        transition-duration: 300ms;
+    
+    }
+}

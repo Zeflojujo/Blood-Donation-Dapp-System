@@ -1,0 +1,23 @@
+a.active{
+    margin: 0px;
+    width: 100%;
+    padding: 20px;
+    /* background-color: rgba(130,130,130,0.17); */
+    --tw-text-opacity: 1;
+    color: white;
+    transition-duration: 300ms;
+
+}
+
+@media (prefers-color-scheme: dark) {
+    a.active{
+        margin: 0px;
+        width: 100%;
+        padding: 20px;
+        background-color: rgba(130,130,130,0.17);
+        --tw-text-opacity: 1;
+        color: rgb(37 99 235 / var(--tw-text-opacity));
+        transition-duration: 300ms;
+    
+    }
+}
