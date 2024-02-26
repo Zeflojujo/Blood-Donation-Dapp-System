@@ -12,7 +12,7 @@ import { FaInfoCircle } from "react-icons/fa";
 // import { IoSettingsSharp } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 
-const DSHeader = ({ isOpen, toggleSidebar, isAuth }) => {
+const DNHeader = ({ isOpen, toggleSidebar, isAuth }) => {
   const [connectedAccount] = useGlobalState("connectedAccount");
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
@@ -107,4 +107,4 @@ const DSHeader = ({ isOpen, toggleSidebar, isAuth }) => {
   );
 };
 
-export default DSHeader;
+export default DNHeader;

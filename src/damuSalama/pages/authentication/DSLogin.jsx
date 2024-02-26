@@ -1,3 +1,4 @@
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import {
     useGlobalState,
     setGlobalState,
@@ -6,10 +7,43 @@ import {
   } from '../../../store'
   import { useState } from 'react'
   import Laboratory from "../../../assets/laboratory.jpg"
+import { systemOwnerLogin } from '../../../BlockchainService'
+import Alert from '../../../+homedirectory/components/Alert';
+import Loading from '../../../+homedirectory/components/Loding';
 
   const DSLogin = () => {
+    const navigate = useNavigate();
     const [publicAddress, setPublicAddress] = useState('')
     const [password, setPassword] = useState('') 
+
+    const handleSystemOwnerLogin = async (e) => {
+      e.preventDefault();
+
+      setGlobalState('loading', { show: true, msg: 'Blood checking...' })
+  
+      try {
+          const sysOwnerCredentials = { publicAddress, password }
+      
+          setLoadingMsg('Intializing transaction...')
+          const result = await systemOwnerLogin(sysOwnerCredentials)
+          console.log(result)
+          
+          if(result){
+              setAlert('Login successfully...', 'green')
+              setTimeout(() => {
+                navigate('/damu-salama/dashboard');
+              // window.location.href="/damu-salama/dashboard"
+              }, 2000);
+              resetForm()
+          }else {
+              throw Error
+          }
+
+  } catch (error) {
+        console.log('Error registering donor: ', error)
+        setAlert('Invalid publicAddress or password...', 'red')
+      }
+    }
   
   
     const resetForm = () => {
@@ -24,7 +58,9 @@ import {
           transition-transform duration-300 scale-100`}
       >
         <div className="bg-[#151c25] shadow-xl shadow-[#3229e3] rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
-          <form className="flex flex-col">
+          <Alert />
+          <Loading />
+          <form className="flex flex-col" onSubmit={handleSystemOwnerLogin}>
             <div className="flex flex-row justify-center items-center">
               <p className="font-semibold text-2xl text-gray-400">Damu Salama Authentication</p>
             </div>
@@ -41,9 +77,7 @@ import {
   
             <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
               <input
-                className="block w-full text-sm
-                  text-slate-500 bg-transparent border-0
-                  focus:outline-none focus:ring-0"
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="text"
                 name="publicAddress"
                 placeholder="publicAddress"
@@ -55,9 +89,7 @@ import {
   
             <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
               <input
-                className="block w-full text-sm
-                  text-slate-500 bg-transparent border-0
-                  focus:outline-none focus:ring-0"
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="password"
                 step={0.01}
                 min={0.01}
@@ -71,7 +103,6 @@ import {
   
             <button
               type="submit"
-              // onClick={handleSubmit}
               className="flex flex-row justify-center items-center
                 w-full text-white text-md bg-[#e32970]
                 hover:bg-[#bd255f] py-2 px-5 rounded-full

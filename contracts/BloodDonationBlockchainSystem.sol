@@ -6,6 +6,13 @@ contract BloodDonationBlockchainSystem {
     enum TransportationStatus { InTransit, Delivered }
     enum BloodSupplyStatus { Available, Requested }
 
+    /// @dev create system account structure
+    struct SystemOwner {
+        address sysOwner;
+        string password /*audit*/;
+        bool isLogin;
+    }
+
     struct Donor {
         address donorPublicAddress;
         string name;
@@ -57,7 +64,6 @@ contract BloodDonationBlockchainSystem {
         uint256 bloodPressure;
         uint256 hemoglobinLevel;
         string bloodTestResults;
-        bool HIV;
         // uint256[] donationHistory;
     }
 
@@ -78,6 +84,8 @@ contract BloodDonationBlockchainSystem {
     }
 
     address public owner;
+    mapping(address => SystemOwner) private sysOwnerMap;
+    
     mapping(address => Donor) public donors;
     mapping(address => Transporter) public transporters;
     mapping(address => MedicalCenter) public medicalsCenters;
@@ -96,7 +104,7 @@ contract BloodDonationBlockchainSystem {
     uint256 public recordCounter;
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can call this function");
+        require(msg.sender == owner, "Restricted to system owner only");
         _;
     }
 
@@ -116,8 +124,25 @@ contract BloodDonationBlockchainSystem {
     //     _;
     // }
 
+    SystemOwner private sysowner;
+
     constructor() {
         owner = msg.sender;
+        sysowner = SystemOwner(owner, "admin", false);
+        sysOwnerMap[owner] = sysowner;
+    }
+
+    function checkSystemOwnerLogin(address _SYSPublicAddress, string memory _password) public view returns (bool) {
+        // require(!medicalsCenters[_MCPublicAddress].isLogin, "You're already logged in");
+        require(compareString(sysOwnerMap[_SYSPublicAddress].password, _password), "Invalid address or password");
+
+        return true;
+    }
+
+    function systemOwnerLogin(address _MCPublicAddress, string memory _password) public {
+        require(checkSystemOwnerLogin(_MCPublicAddress, _password), "Invalid login credentials");
+
+        sysOwnerMap[_MCPublicAddress].isLogin = true;
     }
 
     function addDonor(
@@ -190,7 +215,7 @@ contract BloodDonationBlockchainSystem {
     ) public {
         require(
             transporters[_transporterPublicAddress].isRegistered == false,
-            "Donor is already registered"
+            "Transporter already registered"
         );
         transporters[_transporterPublicAddress] = Transporter({
             transporterPublicAddress: _transporterPublicAddress,
@@ -223,15 +248,13 @@ contract BloodDonationBlockchainSystem {
         returns (
             address transporterPublicAddress,
             string memory name,
-            string memory phoneNumber,
-            bool isRegistered
+            string memory phoneNumber
         )
     {
         Transporter memory transporter = transporters[_transporterPublicAddress];
         transporterPublicAddress = transporter.transporterPublicAddress;
         name = transporter.name;
         phoneNumber = transporter.phoneNumber;
-        isRegistered = transporter.isRegistered;
     }
 
     function addMedicalCenter(
@@ -242,7 +265,7 @@ contract BloodDonationBlockchainSystem {
     ) public {
         require(
             medicalsCenters[_MCPublicAddress].isRegistered == false,
-            "Donor is already registered"
+            "Medical center is already registered"
         );
         medicalsCenters[_MCPublicAddress] = MedicalCenter({
             MCPublicAddress: _MCPublicAddress,
@@ -267,7 +290,7 @@ contract BloodDonationBlockchainSystem {
 
     function checkMedicalCenterLogin(address _MCPublicAddress, string memory _password) public view returns (bool) {
         require(medicalsCenters[_MCPublicAddress].isRegistered == true, "You're not registered yet!");
-        require(!medicalsCenters[_MCPublicAddress].isLogin, "You're already logged in");
+        // require(!medicalsCenters[_MCPublicAddress].isLogin, "You're already logged in");
         require(compareString(medicalsCenters[_MCPublicAddress].password, _password), "Invalid address or password");
 
         return true;
@@ -279,6 +302,11 @@ contract BloodDonationBlockchainSystem {
         medicalsCenters[_MCPublicAddress].isLogin = true;
     }
 
+    function medicalCenterLogout(address _MCPublicAddress) public {
+        require(medicalsCenters[_MCPublicAddress].isLogin, "You're not logged in");
+
+        medicalsCenters[_MCPublicAddress].isLogin = false;
+    }
 
     function getMedicalCentersArr() public view returns (address[] memory) {
         return medicaCenterAddressArr;
@@ -292,15 +320,13 @@ contract BloodDonationBlockchainSystem {
         returns (
             address MCPublicAddress,
             string memory name,
-            string memory phoneNumber,
-            bool isRegistered
+            string memory phoneNumber
         )
     {
         MedicalCenter memory medicalCenter = medicalsCenters[_medicalStaffPublicAddress];
         MCPublicAddress = medicalCenter.MCPublicAddress;
         name = medicalCenter.name;
         phoneNumber = medicalCenter.phoneNumber;
-        isRegistered = medicalCenter.isRegistered;
     }
 
     // function donorChangePassword(string memory _oldPassword, string memory _newPassword) external {
@@ -398,7 +424,6 @@ contract BloodDonationBlockchainSystem {
         string memory _medicalCenter,
         uint256 _bloodPressure,
         uint256 _hemoglobinLevel,
-        bool _HIV,
         string memory _bloodTestResults
     ) public {
         require(
@@ -425,8 +450,7 @@ contract BloodDonationBlockchainSystem {
             medicalStaff: msg.sender,
             bloodPressure: _bloodPressure,
             hemoglobinLevel: _hemoglobinLevel,
-            bloodTestResults: _bloodTestResults,
-            HIV: _HIV
+            bloodTestResults: _bloodTestResults
             // donationHistory: new uint256[](0)
         });
 

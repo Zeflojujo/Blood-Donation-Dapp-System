@@ -25,6 +25,11 @@ import DSLogin from "./damuSalama/pages/authentication/DSLogin";
 import DSRegisterMedicalCenter from "./damuSalama/pages/DSRegisterMedicalCenter";
 import DSRegisterTransporter from "./damuSalama/pages/DSRegisterTransporter";
 import MedicalRecords from "./medicalcenter/pages/MedicalRecords";
+import DNDashboard from "./Donor/pages/DNDashboard";
+import CPDashboard from "./collectionPoint/pages/CPDashboard";
+import MCDashboard from "./medicalcenter/pages/MCDashboard";
+import DSDashboard from "./damuSalama/pages/DSDashboard";
+import DonationTransactionRecord from "./Donor/pages/DonationTransactionRecord";
 
 function App() {
   useEffect(() => {
@@ -42,9 +47,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-
         {/* Damu Salama Routes */}
         <Route path="/damu-salama/login" element={<DSLogin />} />
+        <Route path="/damu-salama/dashboard" element={<DSDashboard />} />
         <Route
           path="/damu-salama/medical-center"
           element={<DSRegisterMedicalCenter />}
@@ -53,9 +58,9 @@ function App() {
           path="/damu-salama/transporter"
           element={<DSRegisterTransporter />}
         />
-
         {/* Medical Center Routes */}
         <Route path="/medical-center/login" element={<MDLogin />} />
+        <Route path="/medical-center/dashboard" element={<MCDashboard />} />
         <Route path="/medical-center/verify-blood" element={<VerifyBlood />} />
         <Route path="/medical-center/view-donor" element={<MDViewDonor />} />
         <Route
@@ -70,13 +75,14 @@ function App() {
           path="/medical-center/donate-blood-to-medicalcenter"
           element={<DonateBloodToMedicalCenter />}
         />
-
         {/* Donor Routes */}
         <Route path="/donor/login" element={<DonorLogin />} />
+        <Route path="/donor/dashboard" element={<DNDashboard />} />
+        <Route path="/donor/records" element={<DonationTransactionRecord />} />
         <Route path="/transporter/login" element={<TransLogin />} />
         <Route path="/collection-point/login" element={<CPLogin />} />
-
         {/* Collection Point Routes */}
+        <Route path="/collection-point/dashboard" element={<CPDashboard />} />
         <Route
           path="/collection-point/register-donor"
           element={<CPRegisterDonor />}

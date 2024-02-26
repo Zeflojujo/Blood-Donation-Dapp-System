@@ -1,7 +1,7 @@
 import React from "react"
 // import { FaAngleLeft } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md"
-import { FaChartPie } from "react-icons/fa"
+import { FaChartPie, FaRecordVinyl } from "react-icons/fa"
 import { FaUser } from "react-icons/fa"
 import { FaWineBottle } from "react-icons/fa"
 import { BsDatabaseFillAdd, BsQrCode } from "react-icons/bs"
@@ -13,13 +13,13 @@ import { FaCableCar } from "react-icons/fa6";
 
 // import "./Sidebar.css"
 
-const DSSidebar = ({ isOpen, toggleSidebar }) => {
+const DNSidebar = ({ isOpen, toggleSidebar }) => {
     // const [open, setOpen] = useState(true);
     // const [selected, setSelected] = useState(true);
 
     const Menus = [
-        { title: "Dashboard", link: "/damu-salama/dashboard", icon: <MdDashboard /> },
-        { title: "Medical Center", link: "/damu-salama/medical-center", icon: <MdAddHomeWork /> },
+        { title: "Dashboard", link: "/donor/dashboard", icon: <MdDashboard /> },
+        { title: "Donation Record", link: "/donor/records", icon: <FaRecordVinyl /> },
         {
             title: "Transporter",
             link: "/damu-salama/transporter",
@@ -82,4 +82,4 @@ const DSSidebar = ({ isOpen, toggleSidebar }) => {
     )
 }
 
-export default DSSidebar
+export default DNSidebar

@@ -15,7 +15,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     // const [selected, setSelected] = useState(true);
 
     const Menus = [
-        { title: "Dashboard", link: "/manufacturer/dashboard", icon: <MdDashboard /> },
+        { title: "Dashboard", link: "/medical-center/dashboard", icon: <MdDashboard /> },
         { title: "View Donors", link: "/medical-center/view-donor", icon: <FaUser /> },
         {
             title: "Donation Transaction",

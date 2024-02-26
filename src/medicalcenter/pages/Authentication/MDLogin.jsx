@@ -6,14 +6,41 @@ import {
   } from '../../../store'
   import { useState } from 'react'
   import Laboratory from "../../../assets/laboratory.jpg"
+import { medicalCenterLogin } from '../../../BlockchainService'
 
   const MDLogin = () => {
-    const [username, setUsername] = useState('')
+    const [publicAddress, setPublicAddress] = useState('')
     const [password, setPassword] = useState('') 
+
+
+    const handleMedicalCenterLogin = async (e) => {
+      e.preventDefault();
+
+      setGlobalState('loading', { show: true, msg: 'Blood checking...' })
+  
+      try {
+          const MedicalCenterCredentials = { publicAddress, password }
+      
+          setLoadingMsg('Intializing transaction...')
+          const result = await medicalCenterLogin(MedicalCenterCredentials)
+          console.log(result)
+          
+          if(result){
+              setAlert('Login successfully...', 'green')
+              resetForm()
+          }else {
+              throw Error
+          }
+
+  } catch (error) {
+        console.log('Error registering donor: ', error)
+        setAlert('Blood Checking failed...', 'red')
+      }
+    }
   
   
     const resetForm = () => {
-      setUsername('')
+      setPublicAddress('')
       setPassword('')
     }
   
@@ -45,10 +72,10 @@ import {
                   text-slate-500 bg-transparent border-0
                   focus:outline-none focus:ring-0"
                 type="text"
-                name="username"
-                placeholder="Username"
-                onChange={(e) => setUsername(e.target.value)}
-                value={username}
+                name="publicAddress"
+                placeholder="publicAddress"
+                onChange={(e) => setPublicAddress(e.target.value)}
+                value={publicAddress}
                 required
               />
             </div>
@@ -71,7 +98,7 @@ import {
   
             <button
               type="submit"
-              // onClick={handleSubmit}
+              onClick={handleMedicalCenterLogin}
               className="flex flex-row justify-center items-center
                 w-full text-white text-md bg-[#e32970]
                 hover:bg-[#bd255f] py-2 px-5 rounded-full

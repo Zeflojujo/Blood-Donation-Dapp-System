@@ -4,15 +4,14 @@ import { setAlert, setGlobalState, setLoadingMsg, truncate, useGlobalState } fro
 import { FaTimes } from 'react-icons/fa';
 
 
-const TransactionTable = () => {
+const DNDonationRecordTable = () => {
   const [donationTransaction] = useGlobalState("donationTransactions");
-  const [transactionId] = useGlobalState("transactionId");
   const [modal] = useGlobalState('modal')
   const [hoveredRow, setHoveredRow] = useState(null);
   const [allDonationTransaction, setAllDonationTransaction] = useState([])
   const [end, setEnd] = useState(5)
 
-  // const [transactionID, setTransactionID] = useState("")
+  const [transactionID, setTransactionID] = useState("")
     const [hemoglobinLevel, setHemoglobinLevel] = useState("")
     const [medicalCenter, setMedicalCenter] = useState("")
     const [bloodPressure, setBloodPressure] = useState("")
@@ -34,26 +33,20 @@ const TransactionTable = () => {
 
   const handleCompleteTransaction = async (e) => {
     e.preventDefault()
-    
 
-    // if (!transactionId || !hemoglobinLevel || !medicalCenter || !bloodPressure || !bloodTestResults) return
+    if (!hemoglobinLevel || !medicalCenter || !bloodPressure || !bloodTestResults) return
 
     setGlobalState('modal', 'scale-0')
-    setGlobalState('loading', { show: true, msg: 'Blood Testing...' })
+    setGlobalState('loading', { show: true, msg: 'Registering donor...' })
 
     try {
 
-      console.log(transactionId)
-    console.log(hemoglobinLevel)
-    console.log(bloodPressure)
-    console.log(bloodTestResults)
-
       setLoadingMsg('Intializing transaction...')
-      const result = await completeDonationTransaction({transactionId, medicalCenter, bloodPressure, hemoglobinLevel, bloodTestResults })
-      console.log("result: ", result)
+      const result = await completeDonationTransaction({hemoglobinLevel, medicalCenter, bloodPressure, bloodTestResults })
+      
       if(result){
           resetForm()
-          setAlert('Blood Test is completed...', 'green')
+          setAlert('Donation transaction is completed...', 'green')
           window.location.reload()
 
       }else {
@@ -61,8 +54,8 @@ const TransactionTable = () => {
       }
       
     } catch (error) {
-      console.log('Error complete donation transaction: ', error.message)
-      setAlert('Blood Test failed...', 'red')
+      console.log('Error uploading file: ', error)
+      setAlert('Registration failed...', 'red')
     }
   }
 
@@ -91,12 +84,11 @@ const TransactionTable = () => {
   useEffect(() => {
     setAllDonationTransaction(getDonors())
     console.log(donationTransaction)
-  }, [donationTransaction, transactionId, end])
+  }, [donationTransaction, end])
 
   const completeDonationTransaction = async (_transactionID) => {
     setGlobalState('modal', 'scale-100')
-    setGlobalState('transactionId', _transactionID)
-    // setTransactionID(_transactionID)
+    setTransactionID(_transactionID)
   }
 
   return (
@@ -127,10 +119,6 @@ const TransactionTable = () => {
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Donat Date</th>
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Medical Center</th>
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Status</th>
-              <th className="py-2 px-4 border-b text-start text-lg uppercase">BloodTestResult</th>
-
-              <th className="py-2 px-4 text-start text-lg uppercase">Actions</th>
-              {/* <th className="py-2 px-4 text-start"></th> */}
             </tr>
           </thead>
           <tbody>
@@ -150,12 +138,6 @@ const TransactionTable = () => {
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.donationDate.toString()}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.medicalCenter}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{handleConvertTransactionStatus(donation.status.toString())}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{}</td>
-
-                {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
-                <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Complete</button></td>
-                {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => deleteNewsHandler(item.id)} className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
-                {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => UpdataNewsHandler(item.id)} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Update</button></td> */}
               </tr>
             ))}
           </tbody>
@@ -169,7 +151,7 @@ const TransactionTable = () => {
           transition-transform duration-300 ${modal}`}
       >
         {/* ${modal} */}
-        <div className="shadow-xl rounded-xl w-11/12 md:w-2/5 h-7/12 p-6 bg-gray-100 shadow-blue-600 dark:bg-[#151c25] dark:shadow-[#e32970]">
+        <div className="bg-[#151c25] shadow-xl shadow-[#e32970] rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
           <form className="flex flex-col">
             <div className="flex flex-row justify-between items-center">
               {/* <p className="font-semibold text-gray-400">Complete Blood Checking</p> */}
@@ -185,23 +167,37 @@ const TransactionTable = () => {
               </button>
             </div>
 
-            <hr className="w-full dark:border-gray-500 border-t-6 border-gray-600 text-black dark:h-1 mt-6 mb-3" />
+            <hr className="w-full dark:border-gray-500 dark:h-1 mt-6 mb-3" />
   
-            <div className="mt-4">
+            {/* <div className="flex flex-row justify-center items-center rounded-xl mt-5">
+              <div className="shrink-0 rounded-xl overflow-hidden h-20 w-20">
+                <img
+                  alt="NFT"
+                  className="h-full w-full object-cover cursor-pointer"
+                  src={Donate}
+                />
+              </div>
+            </div> */}
+  
+            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
               <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                className="block w-full text-sm
+                  text-slate-500 bg-transparent border-0
+                  focus:outline-none focus:ring-0"
                 type="text"
                 name="transactionID"
-                // onChange={(e) => setTransactionID(e.target.value)}
-                value={transactionId}
+                onChange={(e) => setTransactionID(e.target.value)}
+                value={transactionID}
                 disabled
                 required
               />
             </div>
 
-            <div className="mt-4">
+            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
             <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                className="block w-full text-sm
+                  text-slate-500 bg-transparent border-0
+                  focus:outline-none focus:ring-0"
                 type="text"
                 name="medicalCenter"
                 placeholder="medicalCenter"
@@ -211,9 +207,11 @@ const TransactionTable = () => {
               />
             </div>
   
-            <div className="mt-4">
+            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
               <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                className="block w-full text-sm
+                  text-slate-500 bg-transparent border-0
+                  focus:outline-none focus:ring-0"
                 type="number"
                 name="bloodPressure"
                 placeholder="bloodPressure (in mmHg)"
@@ -223,9 +221,11 @@ const TransactionTable = () => {
               />
             </div>
 
-            <div className="mt-4">
+            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
               <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                className="block w-full text-sm
+                  text-slate-500 bg-transparent border-0
+                  focus:outline-none focus:ring-0"
                 type="number"
                 name="hemoglobinLevel"
                 placeholder="hemoglobinLevel (in g/dL)"
@@ -235,9 +235,11 @@ const TransactionTable = () => {
               />
             </div>
 
-            <div className="mt-4">
+            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
               <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                className="block w-full text-sm
+                  text-slate-500 bg-transparent border-0
+                  focus:outline-none focus:ring-0"
                 type="text"
                 name="bloodTestResults"
                 placeholder="bloodTestResults"
@@ -250,10 +252,13 @@ const TransactionTable = () => {
             <button
               type="submit"
               onClick={handleCompleteTransaction}
-              className="text-white justify-center bg-blue-700 hover:bg-blue-800 
-              focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 
-              py-2.5 text-center me-2 dark:bg-[#e32970] dark:hover:bg-[#bd255f] 
-              dark:focus:ring-[#bd255f] inline-flex items-center w-full mt-5"
+              className="flex flex-row justify-center items-center
+                w-full text-white text-xs bg-[#e32970]
+                hover:bg-[#bd255f] py-2 px-5 rounded-full
+                drop-shadow-xl border border-transparent
+                hover:bg-transparent hover:text-[#e32970]
+                hover:border hover:border-[#bd255f]
+                focus:outline-none focus:ring mt-5"
             >
               submit
             </button>
@@ -266,4 +271,4 @@ const TransactionTable = () => {
   );
 };
 
-export default TransactionTable;
+export default DNDonationRecordTable;

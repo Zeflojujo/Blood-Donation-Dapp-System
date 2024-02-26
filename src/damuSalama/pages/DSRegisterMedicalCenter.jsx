@@ -43,6 +43,7 @@ const DSRegisterMedicalCenter = () => {
         setLoadingMsg('Intializing transaction...')
         const password = name
         const result = await registerMedicalStaff({publicAddress, name, phoneNumber, password})
+        console.log(result)
         
         if(result){
             resetForm()
@@ -58,7 +59,6 @@ const DSRegisterMedicalCenter = () => {
             setAlert('MedicalCenter registration failed...', 'red')
         }
     }
-
 
     const closeModal = () => {
         setGlobalState('modal', 'scale-0')

@@ -115,6 +115,36 @@ const registerMedicalStaff = async ({
   }
 };
 
+const medicalCenterLogin = async ({ publicAddress, password }) => {
+  try {
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .medicalCenterLogin(publicAddress, password)
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const systemOwnerLogin = async ({ publicAddress, password }) => {
+  try {
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .systemOwnerLogin(publicAddress, password)
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const displayDonors = async () => {
   try {
     if (!ethereum) return window.alert("Please install Metamask");
@@ -261,8 +291,8 @@ const initiateDonationTransaction = async ({
   }
 };
 
-const completeDonation = async ({
-  transactionID,
+const completeDonationTransaction = async ({
+  transactionId,
   medicalCenter,
   bloodPressure,
   hemoglobinLevel,
@@ -274,7 +304,7 @@ const completeDonation = async ({
 
     await contract.methods
       .completeDonationToMedicalCenter(
-        Number(transactionID),
+        Number(transactionId),
         medicalCenter,
         Number(bloodPressure),
         Number(hemoglobinLevel),
@@ -294,10 +324,12 @@ export {
   addDonor,
   registerTransporter,
   registerMedicalStaff,
+  systemOwnerLogin,
+  medicalCenterLogin,
   displayDonors,
   displayTransporters,
   displayMedicalCenters,
   displayDonationTransaction,
   initiateDonationTransaction,
-  completeDonation,
+  completeDonationTransaction,
 };

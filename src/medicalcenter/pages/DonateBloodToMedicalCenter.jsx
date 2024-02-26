@@ -5,7 +5,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import swal from "sweetalert"
 import { setAlert, setGlobalState, setLoadingMsg } from "../../store"
-import { completeDonation } from "../../BlockchainService"
+import { completeDonationTransaction } from "../../BlockchainService"
 import Alert from "../../+homedirectory/components/Alert"
 import Loading from "../../+homedirectory/components/Loding"
 
@@ -31,10 +31,11 @@ const DonateBloodToMedicalCenter = () => {
             const bloodDetails = { transactionID, medicalCenter, bloodPressure, hemoglobinLevel, bloodTestResults }
         
             setLoadingMsg('Intializing transaction...')
-            const result = await completeDonation(bloodDetails)
+            const result = await completeDonationTransaction(bloodDetails)
             
             if(result){
-                setAlert('Blood Checked successfully...', 'green')
+                // setAlert('Blood Checked successfully...', 'green')
+
                 resetForm()
             }else {
                 throw Error

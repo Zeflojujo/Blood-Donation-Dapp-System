@@ -14,9 +14,9 @@ const CPSidebar = ({ isOpen, toggleSidebar }) => {
     // const [selected, setSelected] = useState(true);
 
     const Menus = [
-        { title: "Dashboard", link: "/manufacturer/dashboard", icon: <MdDashboard /> },
+        { title: "Dashboard", link: "/collection-point/dashboard", icon: <MdDashboard /> },
         { title: "Register Donor", link: "/collection-point/register-donor", icon: <BsDatabaseFillAdd /> },
-        { title: "View Donors", link: "/collection-point/view-donor", icon: <FaUser /> },
+        // { title: "View Donors", link: "/collection-point/view-donor", icon: <FaUser /> },
         { title: "Donation Transaction", link: "/collection-point/donation-transaction", icon: <FaKeycdn /> },
     ]
 
