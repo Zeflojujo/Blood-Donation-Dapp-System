@@ -174,8 +174,8 @@ contract BloodDonationBlockchainSystem {
     //     require(donors[_donorPublicAddress].isRegistered == true, "Your not registered yet!");
     //     require(donors[_donorPublicAddress].isLogin == false, "Your Already login");
     //     require(compareString(donors[_donorPublicAddress].password, _password), "Invalid address or password");
-    //     Donor memory donor = donors[_donorPublicAddress];
-    //     donor.isLogin = true;
+        
+    //     donors[_donorPublicAddress].isLogin = true;
     // }
 
     function getDonorsArr() public view returns (address[] memory) {
@@ -227,13 +227,13 @@ contract BloodDonationBlockchainSystem {
         });
         transporterAddressArr.push(_transporterPublicAddress);
     }
+
     // function  transporterLogin(address _transporterPublicAddress, string memory _password) public {
     //     require(transporters[_transporterPublicAddress].isRegistered == true, "Your not registered yet!");
     //     require(transporters[_transporterPublicAddress].isLogin == false, "Your Already login");
     //     require(compareString(transporters[_transporterPublicAddress].password, _password), "Invalid address or password");
 
-    //     Transporter memory transporter = transporters[_transporterPublicAddress];
-    //     transporter.isLogin = true;
+    //     transporters[_transporterPublicAddress].isLogin = true;
     // }
 
     function getTransportersArr() public view returns (address[] memory) {
@@ -480,7 +480,7 @@ contract BloodDonationBlockchainSystem {
             "Medical center process not completed"
         );
 
-        uint256 transactionID = generateTransactionID();
+        uint256 transactionID = block.timestamp;
         donationTransactions[transactionID] = DonationTransaction({
             transactionID: transactionID,
             donor: donationTransactions[_transactionID].donor,
@@ -512,16 +512,16 @@ contract BloodDonationBlockchainSystem {
         donationTransactions[_transactionID].transporter = msg.sender;
     }
 
-    function calculateDonatedVolume(
-        uint256 _transactionID
-    ) internal view returns (uint256) {
-        require(
-            donationTransactions[_transactionID].status ==
-                TransactionStatus.Completed,
-            "Transaction not completed"
-        );
-        return donationTransactions[_transactionID].donatedVolume;
-    }
+    // function calculateDonatedVolume(
+    //     uint256 _transactionID
+    // ) internal view returns (uint256) {
+    //     require(
+    //         donationTransactions[_transactionID].status ==
+    //             TransactionStatus.Completed,
+    //         "Transaction not completed"
+    //     );
+    //     return donationTransactions[_transactionID].donatedVolume;
+    // }
 
     function calculatePayment(
         uint256 _transactionID
@@ -557,31 +557,31 @@ contract BloodDonationBlockchainSystem {
         }
     }
 
-    function requestBloodType(
-        string memory _bloodType,
-        uint256 _volume
-    ) public {
-        // onlyMedicalStaff
-        require(
-            bloodSupplies[_bloodType].status == BloodSupplyStatus.Available,
-            "Blood type not available"
-        );
-        require(
-            bloodSupplies[_bloodType].volume >= _volume,
-            "Insufficient blood volume"
-        );
+    // function requestBloodType(
+    //     string memory _bloodType,
+    //     uint256 _volume
+    // ) public {
+    //     // onlyMedicalStaff
+    //     require(
+    //         bloodSupplies[_bloodType].status == BloodSupplyStatus.Available,
+    //         "Blood type not available"
+    //     );
+    //     require(
+    //         bloodSupplies[_bloodType].volume >= _volume,
+    //         "Insufficient blood volume"
+    //     );
 
         // You can add more logic here to handle the request
         // For example, update the blood supply status or create a new transaction record
-    }
+    // }
 
-    function generateTransactionID() internal returns (uint256) {
-        transactionCounter++;
-        return
-            uint256(
-                keccak256(abi.encodePacked(block.timestamp, transactionCounter))
-            );
-    }
+    // function generateTransactionID() internal returns (uint256) {
+    //     transactionCounter++;
+    //     return
+    //         uint256(
+    //             keccak256(abi.encodePacked(block.timestamp, transactionCounter))
+    //         );
+    // }
 
     function compareString(string memory _a, string memory _b) internal pure returns(bool) {
         return keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b));

@@ -145,6 +145,21 @@ const systemOwnerLogin = async ({ publicAddress, password }) => {
   }
 };
 
+const donorLogin = async ({ publicAddress, password }) => {
+  try {
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .donorLogin(publicAddress, password)
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const displayDonors = async () => {
   try {
     if (!ethereum) return window.alert("Please install Metamask");
@@ -326,6 +341,7 @@ export {
   registerMedicalStaff,
   systemOwnerLogin,
   medicalCenterLogin,
+  donorLogin,
   displayDonors,
   displayTransporters,
   displayMedicalCenters,

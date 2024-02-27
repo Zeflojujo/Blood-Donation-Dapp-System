@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
     useGlobalState,
     setGlobalState,
@@ -104,8 +104,8 @@ import Loading from '../../../+homedirectory/components/Loding';
             <button
               type="submit"
               className="flex flex-row justify-center items-center
-                w-full text-white text-md bg-[#e32970]
-                hover:bg-[#bd255f] py-2 px-5 rounded-full
+                w-full text-white text-base md:text-lg bg-[#e32970]
+                hover:bg-[#bd255f] py-2 px-5 rounded-lg
                 drop-shadow-xl border border-transparent
                 hover:bg-transparent hover:text-[#e32970]
                 hover:border hover:border-[#bd255f]

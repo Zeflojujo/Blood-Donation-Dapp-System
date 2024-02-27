@@ -42,6 +42,14 @@ contract DonorContract {
         donorAddressArr.push(_donorPublicAddress);
     }
 
+    function  donorLogin(address _donorPublicAddress, string memory _password) public {
+        require(donors[_donorPublicAddress].isRegistered == true, "Your not registered yet!");
+        require(donors[_donorPublicAddress].isLogin == false, "Your Already login");
+        require(compareString(donors[_donorPublicAddress].password, _password), "Invalid address or password");
+        
+        donors[_donorPublicAddress].isLogin = true;
+    }
+
     function getDonorsArr() public view returns (address[] memory) {
         return donorAddressArr;
     }
@@ -67,5 +75,10 @@ contract DonorContract {
         phoneNumber = donor.phoneNumber;
         donatedVolume = donor.donatedVolume;
         totalPayment = donor.totalPayment;
+    }
+
+    /// @dev this is helper function
+    function compareString(string memory _a, string memory _b) internal pure returns(bool) {
+        return keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b));
     }
 }
