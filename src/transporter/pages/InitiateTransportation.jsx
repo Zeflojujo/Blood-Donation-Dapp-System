@@ -1,18 +1,18 @@
-import Sidebar from "../layouts/CPSidebar"
-import DashboardHeader from "../layouts/CPHeader"
+import { useState } from 'react'
+import Sidebar from "../layouts/TPSidebar"
+import DashboardHeader from "../layouts/TPHeader"
 import {
     // useGlobalState,
     setGlobalState,
     setLoadingMsg,
     setAlert,
   } from '../../store'
-  import { useState } from 'react'
-  import { initiateDonationTransaction } from '../../BlockchainService'
+import { initiateDonationTransaction } from '../../BlockchainService'
 import Alert from "../../+homedirectory/components/Alert"
 import Loading from "../../+homedirectory/components/Loding"
   
   
-  const CPDonationTransaction = () => {
+  const InitiateTransportation = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false)
     // const [modal] = useGlobalState('modal')
     const [publicAddress, setPublicAddress] = useState('')
@@ -80,7 +80,7 @@ import Loading from "../../+homedirectory/components/Loding"
 
                      <div className={`w-4/5  md:w-3/4 lg:w-1/2 shadow-xl shadow-blue-600 mt-8 flex-col items-center justify-center bg-gray-100 dark:bg-transparent dark:border dark:border-blue-500 dark:shadow-md dark:rounded-md dark:shadow-gray-400`}>
                          <h2 className="text-1xl flex justify-center md:text-3xl font-bold text-gray-800 dark:text-gray-400 mt-4 pt-3">
-                             Initiate Donation Transaction
+                             Initiate Transportation
                          </h2>
                          <hr className="hidden dark:block w-full dark:border-gray-500 dark:h-1 mt-6" />
 
@@ -137,7 +137,7 @@ import Loading from "../../+homedirectory/components/Loding"
                                 </button>
                             </form>
                             <Alert />
-                     <Loading />
+                            <Loading />
 
                     </div>
                 </div>
@@ -147,6 +147,6 @@ import Loading from "../../+homedirectory/components/Loding"
     )
   }
   
-  export default CPDonationTransaction
+  export default InitiateTransportation
   
 

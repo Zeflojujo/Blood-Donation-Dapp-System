@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import {
-    useGlobalState,
+    // useGlobalState,
     setGlobalState,
     setLoadingMsg,
     setAlert,
@@ -19,13 +19,13 @@ import Loading from '../../../+homedirectory/components/Loding';
     const handleSystemOwnerLogin = async (e) => {
       e.preventDefault();
 
-      setGlobalState('loading', { show: true, msg: 'Blood checking...' })
+      setGlobalState('loading', { show: true, msg: 'System Owner is Login...' })
   
       try {
-          const sysOwnerCredentials = { publicAddress, password }
+          const LoginCredentials = { publicAddress, password }
       
           setLoadingMsg('Intializing transaction...')
-          const result = await systemOwnerLogin(sysOwnerCredentials)
+          const result = await systemOwnerLogin(LoginCredentials)
           console.log(result)
           
           if(result){

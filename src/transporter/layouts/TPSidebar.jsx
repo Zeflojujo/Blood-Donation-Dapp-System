@@ -1,30 +1,22 @@
 import React from "react"
 // import { FaAngleLeft } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md"
-import { FaChartPie } from "react-icons/fa"
-import { FaUser } from "react-icons/fa"
 import { FaWineBottle } from "react-icons/fa"
-import { BsDatabaseFillAdd, BsQrCode } from "react-icons/bs"
+import { BsDatabaseFillAdd } from "react-icons/bs"
 import { IoIosArrowForward } from "react-icons/io"
 import { FaKeycdn } from "react-icons/fa6"
 import { NavLink } from "react-router-dom"
-// import "./Sidebar.css"
+// import "./CPSidebar.css"
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
+const TPSidebar = ({ isOpen, toggleSidebar }) => {
     // const [open, setOpen] = useState(true);
     // const [selected, setSelected] = useState(true);
 
     const Menus = [
-        { title: "Dashboard", link: "/medical-center/dashboard", icon: <MdDashboard /> },
-        { title: "View Donors", link: "/medical-center/view-donor", icon: <FaUser /> },
-        {
-            title: "Donation Transaction",
-            link: "/medical-center/verify-blood",
-            icon: <FaKeycdn />,
-        },
-        // { title: "Blood Checking", link: "/medical-center/donate-blood-to-medicalcenter", icon: <FaKeycdn /> },
-        { title: "Medical Records", link: "/medical-center/medical-records", icon: <FaChartPie /> },
-        // { title: "Blood Supplied", link: "/medical-center/blood-supplied", icon: <FaChartPie /> },
+        { title: "Dashboard", link: "/transporter/dashboard", icon: <MdDashboard /> },
+        { title: "Register Donor", link: "/transporter/complete-transportation", icon: <BsDatabaseFillAdd /> },
+        // { title: "View Donors", link: "/transporter/view-donor", icon: <FaUser /> },
+        { title: "Donation Transaction", link: "/transporter/initiate-transportation", icon: <FaKeycdn /> },
     ]
 
     return (
@@ -79,4 +71,4 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     )
 }
 
-export default Sidebar
+export default TPSidebar

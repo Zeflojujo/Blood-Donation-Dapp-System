@@ -107,7 +107,7 @@ const DSRegisterMedicalCenter = () => {
                     justify-center bg-black bg-opacity-50 transform
                     transition-transform duration-300 ${modal}`}
                 >
-                <div className="bg-[#151c25] shadow-xl shadow-[#e32970] rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
+                <div className="shadow-xl rounded-xl w-11/12 md:w-2/5 h-7/12 p-6 bg-gray-100 shadow-blue-600 dark:bg-[#151c25] dark:shadow-[#e32970]">
                     <form className="flex flex-col">
                     <div className="flex flex-row justify-between items-center">
                         <p className="font-semibold text-gray-400">Register Medical Center</p>
@@ -130,11 +130,9 @@ const DSRegisterMedicalCenter = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
+                    <div className="mt-4">
                         <input
-                        className="block w-full text-sm
-                            text-slate-500 bg-transparent border-0
-                            focus:outline-none focus:ring-0"
+                        className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                         type="text"
                         name="publicAddress"
                         placeholder="publicAddress"
@@ -144,11 +142,9 @@ const DSRegisterMedicalCenter = () => {
                         />
                     </div>
 
-                    <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
+                    <div className="mt-4">
                         <input
-                        className="block w-full text-sm
-                            text-slate-500 bg-transparent border-0
-                            focus:outline-none focus:ring-0"
+                        className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                         type="text"
                         name="name"
                         placeholder="name"
@@ -158,11 +154,9 @@ const DSRegisterMedicalCenter = () => {
                         />
                     </div>
 
-                    <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
+                    <div className="mt-4">
                         <input
-                        className="block w-full text-sm
-                            text-slate-500 bg-transparent border-0
-                            focus:outline-none focus:ring-0"
+                        className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                         type="text"
                         name="phoneNumber"
                         placeholder="phoneNumber"
@@ -176,8 +170,8 @@ const DSRegisterMedicalCenter = () => {
                         type="submit"
                         onClick={handleSubmit}
                         className="flex flex-row justify-center items-center
-                        w-full text-white text-xs bg-[#e32970]
-                        hover:bg-[#bd255f] py-2 px-5 rounded-full
+                        w-full text-white text-base md:text-lg bg-blue-700 dark:bg-[#e32970]
+                        hover:bg-[#bd255f] py-2 px-5 rounded-lg
                         drop-shadow-xl border border-transparent
                         hover:bg-transparent hover:text-[#e32970]
                         hover:border hover:border-[#bd255f]

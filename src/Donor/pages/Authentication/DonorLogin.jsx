@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import {
-    useGlobalState,
+    // useGlobalState,
     setGlobalState,
     setLoadingMsg,
     setAlert,
@@ -19,19 +19,19 @@ import { donorLogin } from '../../../BlockchainService';
     const handleDonorLogin = async (e) => {
       e.preventDefault();
 
-      setGlobalState('loading', { show: true, msg: 'Blood checking...' })
+      setGlobalState('loading', { show: true, msg: 'Donor Login...' })
   
       try {
-          const sysOwnerCredentials = { publicAddress, password }
+          const LoginCredentials = { publicAddress, password }
       
           setLoadingMsg('Intializing transaction...')
-          const result = await donorLogin(sysOwnerCredentials)
+          const result = await donorLogin(LoginCredentials)
           console.log(result)
           
           if(result){
               setAlert('Login successfully...', 'green')
               setTimeout(() => {
-                navigate('/damu-salama/dashboard');
+                navigate('/donor/dashboard');
               }, 2000);
               resetForm()
           }else {
@@ -103,8 +103,8 @@ import { donorLogin } from '../../../BlockchainService';
             <button
               type="submit"
               className="flex flex-row justify-center items-center
-                w-full text-white text-md bg-[#e32970]
-                hover:bg-[#bd255f] py-2 px-5 rounded-full
+                w-full text-white text-base md:text-lg bg-[#e32970]
+                hover:bg-[#bd255f] py-2 px-5 rounded-lg
                 drop-shadow-xl border border-transparent
                 hover:bg-transparent hover:text-[#e32970]
                 hover:border hover:border-[#bd255f]

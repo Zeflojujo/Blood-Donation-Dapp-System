@@ -11,6 +11,7 @@ contract DonorContract {
         uint256 donatedVolume;
         uint256 totalPayment;
         bool isRegistered;
+        bool isLogin;
         // uint256[] donationHistory;
     }
 
@@ -37,7 +38,8 @@ contract DonorContract {
             _password,
             0,
             0,
-            true
+            true,
+            false
         );
         donorAddressArr.push(_donorPublicAddress);
     }

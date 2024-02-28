@@ -1,4 +1,5 @@
 // import timelessLogo from '../assets/timeless.png'
+import { Link } from 'react-router-dom'
 import { connectWallet } from '../../BlockchainService'
 import { useGlobalState, truncate } from '../../store'
 
@@ -16,13 +17,13 @@ const Header = () => {
 
       <ul
         className="md:flex-[0.5] text-white md:flex
-        hidden list-none flex-row justify-between 
+        hidden list-none flex-row justify-center gap-8 
         items-center flex-initial"
       >
-        <li className="mx-4 cursor-pointer">Supply</li>
-        <li className="mx-4 cursor-pointer">Medical Center</li>
-        <li className="mx-4 cursor-pointer">Transportation</li>
-        <li className="mx-4 cursor-pointer">Donor</li>
+        <li className="mx-4 cursor-pointer"><Link to="/collection-point/login">Collection Point</Link></li>
+        <li className="mx-4 cursor-pointer"><Link to="/medical-center/login">Medical Center</Link></li>
+        <li className="mx-4 cursor-pointer"><Link to="/transporter/login">Transporters</Link></li>
+        <li className="mx-4 cursor-pointer"><Link to="/donor/login">Donor</Link></li>
       </ul>
 
       {connectedAccount ? (

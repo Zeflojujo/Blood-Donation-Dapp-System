@@ -54,6 +54,40 @@ const isWallectConnected = async () => {
   }
 };
 
+// const addDonor = async ({
+//   publicAddress,
+//   name,
+//   bloodType,
+//   phoneNumber,
+//   password,
+// }) => {
+//   try {
+//     const contract = await getEtheriumContract();
+//     const account = getGlobalState("connectedAccount");
+
+//     await contract.methods
+//       .addDonor(publicAddress, name, bloodType, phoneNumber, password)
+//       .send({ from: account, gas: 1000000 });
+
+//     return true;
+//   } catch (error) {
+//     if (
+//       error.message.includes("Only collection point can perform this action")
+//     ) {
+//       const errorMessage = "Please, Login with administrator wallet account";
+//       setGlobalState("donorError", errorMessage);
+//     } else if (error.message.includes("Donor is already registered")) {
+//       const errorMessage = "Donor is already registered";
+//       setGlobalState("donorError", errorMessage);
+//     } else if (error.message.includes("Invalid public address")) {
+//       const errorMessage = "Invalid publicAddress or Password";
+//       setGlobalState("donorError", errorMessage);
+//     } else {
+//       setGlobalState("smartcontractError", "Donor Registration Failed");
+//     }
+//   }
+// };
+
 const addDonor = async ({
   publicAddress,
   name,
@@ -63,15 +97,67 @@ const addDonor = async ({
 }) => {
   try {
     const contract = await getEtheriumContract();
+    // const web3 = getWeb3Instance(); // Assuming you have a function to get web3 instance
     const account = getGlobalState("connectedAccount");
 
-    await contract.methods
-      .addDonor(publicAddress, name, bloodType, phoneNumber, password)
-      .send({ from: account, gas: 1000000 });
+    // Get the nonce for the account
+    const nonce = await window.web3.eth.getTransactionCount(account);
 
+    // Create a transaction object with the method data
+    const transactionObject = contract.methods.addDonor(
+      publicAddress,
+      name,
+      bloodType,
+      phoneNumber,
+      password
+    );
+
+    // Estimate gas
+    const gasEstimate = await transactionObject.estimateGas();
+
+    // Get the gas price
+    const gasPrice = await window.web3.eth.getGasPrice();
+
+    // Create a raw transaction
+    const rawTransaction = {
+      nonce: window.web3.utils.toHex(nonce),
+      gasLimit: window.web3.utils.toHex(gasEstimate),
+      gasPrice: window.web3.utils.toHex(gasPrice),
+      to: contract.options.address,
+      data: transactionObject.encodeABI(),
+    };
+
+    // Sign the transaction
+    const signedTransaction = await window.web3.eth.accounts.signTransaction(
+      rawTransaction,
+      "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d" // Replace privateKey with the private key of the account
+    );
+
+    // Send the signed transaction
+    const receipt = await window.web3.eth.sendSignedTransaction(
+      signedTransaction.rawTransaction
+    );
+
+    console.log("Registration receipt: ", receipt);
+
+    // Handle success
     return true;
   } catch (error) {
-    console.log(error);
+    // Handle errors
+    if (
+      error.message.includes("Only collection point can perform this action")
+    ) {
+      const errorMessage = "Please, Login with administrator wallet account";
+      setGlobalState("donorError", errorMessage);
+    } else if (error.message.includes("Donor is already registered")) {
+      const errorMessage = "Donor is already registered";
+      setGlobalState("donorError", errorMessage);
+    } else if (error.message.includes("Invalid public address")) {
+      const errorMessage = "Invalid publicAddress or Password";
+      setGlobalState("donorError", errorMessage);
+    } else {
+      setGlobalState("smartcontractError", "Donor Registration Failed");
+    }
   }
 };
 
@@ -91,7 +177,13 @@ const registerTransporter = async ({
 
     return true;
   } catch (error) {
-    console.log(error);
+    if (error.message.includes("Restricted to system owner only")) {
+      const errorMessage = "Your have no access to perform this action";
+      setGlobalState("smartcontractError", errorMessage);
+    } else {
+      const errorMessage = "Transporter registration failed...";
+      setGlobalState("smartcontractError", errorMessage);
+    }
   }
 };
 
@@ -146,6 +238,21 @@ const systemOwnerLogin = async ({ publicAddress, password }) => {
 };
 
 const donorLogin = async ({ publicAddress, password }) => {
+  try {
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .donorLogin(publicAddress, password)
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const TransporterLogin = async ({ publicAddress, password }) => {
   try {
     const contract = await getEtheriumContract();
     const account = getGlobalState("connectedAccount");
@@ -247,7 +354,7 @@ const displayMedicalCenters = async () => {
         .getMedicalCenter(medicalCenterAddress)
         .call();
       medicalCenterAddressData.push(_medicalCenter);
-      console.log("Medical Center :", _medicalCenter);
+      // console.log("Medical Center :", _medicalCenter);
     }
 
     setGlobalState("medicalCenters", medicalCenterAddressData);
@@ -279,10 +386,42 @@ const displayDonationTransaction = async () => {
         .getDonationTransaction(transactionId)
         .call();
       donationTransactionData.push(_donationTransaction);
-      console.log("Donation Transaction :", _donationTransaction);
+      // console.log("Donation Transaction :", _donationTransaction);
     }
 
     setGlobalState("donationTransactions", donationTransactionData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const displayMedicalRecord = async () => {
+  try {
+    if (!ethereum) return window.alert("Please install Metamask");
+
+    const contract = await getEtheriumContract();
+
+    const medicalRecordIdArray = await contract.methods
+      .getMedicalRecordsArr()
+      .call();
+
+    const medicalRecordData = [];
+
+    if (medicalRecordIdArray.length === 0) {
+      console.log("NO DATA");
+    }
+
+    for (let i = 0; i < medicalRecordIdArray.length; i++) {
+      const medicalRecordId = medicalRecordIdArray[i];
+      // console.log(`the registration number is: ${voterRegNumber}`);
+      const _donationTransaction = await contract.methods
+        .getMedicalRecord(medicalRecordId)
+        .call();
+      medicalRecordData.push(_donationTransaction);
+      // console.log("Donation Transaction :", _donationTransaction);
+    }
+
+    setGlobalState("medicalRecords", medicalRecordData);
   } catch (error) {
     console.log(error);
   }
@@ -306,7 +445,7 @@ const initiateDonationTransaction = async ({
   }
 };
 
-const completeDonationTransaction = async ({
+const completeDonationTransactions = async ({
   transactionId,
   medicalCenter,
   bloodPressure,
@@ -316,6 +455,8 @@ const completeDonationTransaction = async ({
   try {
     const contract = await getEtheriumContract();
     const account = getGlobalState("connectedAccount");
+
+    console.log("am reach at this point");
 
     await contract.methods
       .completeDonationToMedicalCenter(
@@ -342,10 +483,12 @@ export {
   systemOwnerLogin,
   medicalCenterLogin,
   donorLogin,
+  TransporterLogin,
   displayDonors,
   displayTransporters,
-  displayMedicalCenters,
   displayDonationTransaction,
+  displayMedicalCenters,
+  displayMedicalRecord,
   initiateDonationTransaction,
-  completeDonationTransaction,
+  completeDonationTransactions,
 };

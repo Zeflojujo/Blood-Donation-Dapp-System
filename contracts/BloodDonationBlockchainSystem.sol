@@ -55,6 +55,7 @@ contract BloodDonationBlockchainSystem {
         TransactionStatus status;
         string medicalCenter;
         uint256 donatedVolume;
+        string bloodTestResult;
     }
 
     struct MedicalRecord {
@@ -99,6 +100,7 @@ contract BloodDonationBlockchainSystem {
     address[] public transporterAddressArr;
     address[] public medicaCenterAddressArr;
     uint256[] public donationTransactionsArr;
+    uint256[] public medicalRecordsArr;
 
     uint256 public transactionCounter;
     uint256 public recordCounter;
@@ -110,16 +112,16 @@ contract BloodDonationBlockchainSystem {
 
     // modifier onlyMedicalStaff() {
     //     require(
-    //         donors[msg.sender].user.userType == UserType.MedicalStaff,
-    //         "Only medical staff can call this function"
+    //         medicalsCenters[msg.sender].MCPublicAddress == msg.sender,
+    //         "Only medical staff can perform this action"
     //     );
     //     _;
     // }
 
     // modifier onlyTransporter() {
     //     require(
-    //         donors[msg.sender].user.userType == UserType.Transporter,
-    //         "Only transporters can call this function"
+    //         transporters[msg.sender].transporterPublicAddress == msg.sender,
+    //         "Only transporters can perform this action"
     //     );
     //     _;
     // }
@@ -139,11 +141,11 @@ contract BloodDonationBlockchainSystem {
         return true;
     }
 
-    function systemOwnerLogin(address _MCPublicAddress, string memory _password) public {
-        require(checkSystemOwnerLogin(_MCPublicAddress, _password), "Invalid login credentials");
+    // function systemOwnerLogin(address _MCPublicAddress, string memory _password) public {
+    //     require(checkSystemOwnerLogin(_MCPublicAddress, _password), "Invalid login credentials");
 
-        sysOwnerMap[_MCPublicAddress].isLogin = true;
-    }
+    //     sysOwnerMap[_MCPublicAddress].isLogin = true;
+    // }
 
     function addDonor(
         address _donorPublicAddress,
@@ -212,7 +214,8 @@ contract BloodDonationBlockchainSystem {
         string memory _name,
         string memory _contactNumber,
         string memory _password
-    ) public {
+    ) public onlyOwner() {
+        // onlyOwner
         require(
             transporters[_transporterPublicAddress].isRegistered == false,
             "Transporter already registered"
@@ -263,6 +266,7 @@ contract BloodDonationBlockchainSystem {
         string memory _contactNumber,
         string memory _password
     ) public {
+        // onlyOwner
         require(
             medicalsCenters[_MCPublicAddress].isRegistered == false,
             "Medical center is already registered"
@@ -365,7 +369,8 @@ contract BloodDonationBlockchainSystem {
             donationDate: block.timestamp,
             status: TransactionStatus.Pending,
             medicalCenter: "",
-            donatedVolume: _volume
+            donatedVolume: _volume,
+            bloodTestResult: ""
         });
         donors[_donorPublicAddress].donatedVolume += _volume;
 
@@ -398,7 +403,8 @@ contract BloodDonationBlockchainSystem {
             uint256 donationDate,
             TransactionStatus status,
             string memory medicalCenter,
-            uint256 donatedVolume
+            uint256 donatedVolume,
+            string memory bloodTestResult
         )
     {
         DonationTransaction memory donationTransaction = donationTransactions[
@@ -413,6 +419,7 @@ contract BloodDonationBlockchainSystem {
         status = donationTransaction.status;
         medicalCenter = donationTransaction.medicalCenter;
         donatedVolume = donationTransaction.donatedVolume;
+        bloodTestResult = donationTransaction.bloodTestResult;
     }
 
     // ---------------- End Donation initialization ---------------------
@@ -439,11 +446,9 @@ contract BloodDonationBlockchainSystem {
         donationTransactions[_transactionID].medicalStaff = msg.sender;
         donationTransactions[_transactionID].medicalCenter = _medicalCenter;
         donationTransactions[_transactionID].status = TransactionStatus.Completed;
+        donationTransactions[_transactionID].bloodTestResult = _bloodTestResults;
 
-        // donors[donationTransactions[_transactionID].donor]
-        //     .donatedVolume += calculateDonatedVolume(_transactionID);
-
-        uint256 recordID = generateRecordID();
+        uint256 recordID = block.timestamp;
         medicalRecords[recordID] = MedicalRecord({
             recordID: recordID,
             donor: donationTransactions[_transactionID].donor,
@@ -453,6 +458,7 @@ contract BloodDonationBlockchainSystem {
             bloodTestResults: _bloodTestResults
             // donationHistory: new uint256[](0)
         });
+        medicalRecordsArr.push(recordID);
 
         // donors[donationTransactions[_transactionID].donor].donationHistory.push(
         //     _transactionID
@@ -461,10 +467,43 @@ contract BloodDonationBlockchainSystem {
         // uint256 payment = calculatePayment(
         //     donors[donationTransactions[_transactionID].donor].donatedVolume
         // );
-        uint256 payment = calculatePayment(_transactionID);
-        donors[donationTransactions[_transactionID].donor]
-            .totalPayment += payment;
-        payable(msg.sender).transfer(payment);
+        // uint256 payment = calculatePayment(_transactionID);
+        // donors[donationTransactions[_transactionID].donor]
+        //     .totalPayment += payment;
+        // payable(msg.sender).transfer(payment);
+    }
+
+    function getMedicalRecordsArr()
+        public
+        view
+        returns (uint256[] memory)
+    {
+        return medicalRecordsArr;
+    }
+
+    function getMedicalRecord(
+        uint256 _medicalRecordID
+    )
+        public
+        view
+        returns (
+            uint256 medicalRecordID,
+            address donorAddress,
+            address medicalStaff,
+            uint256 bloodPressure,
+            uint256 hemoglobinLevel,
+            string memory bloodTestResult
+        )
+    {
+        MedicalRecord memory medicalRecord = medicalRecords[
+            _medicalRecordID
+        ];
+        medicalRecordID = medicalRecord.recordID;
+        donorAddress = medicalRecord.donor;
+        medicalStaff = medicalRecord.medicalStaff;
+        bloodPressure = medicalRecord.bloodPressure;
+        hemoglobinLevel = medicalRecord.hemoglobinLevel;
+        bloodTestResult = medicalRecord.bloodTestResults;
     }
 
     // ---------------- End Complete Donation  ------------------------
@@ -486,13 +525,14 @@ contract BloodDonationBlockchainSystem {
             donor: donationTransactions[_transactionID].donor,
             recipient: _recipient,
             medicalStaff: msg.sender,
-            transporter: address(0),
+            transporter: msg.sender,
             bloodType: donationTransactions[_transactionID].bloodType,
-            donationDate: block.timestamp,
-            status: TransactionStatus.Pending,
+            donationDate: donationTransactions[_transactionID].donationDate,
+            status: donationTransactions[_transactionID].status,
             medicalCenter: _medicalCenter,
             donatedVolume: donors[donationTransactions[_transactionID].donor]
-                .donatedVolume
+                .donatedVolume,
+            bloodTestResult: donationTransactions[_transactionID].bloodTestResult
         });
     }
 
@@ -512,7 +552,7 @@ contract BloodDonationBlockchainSystem {
         donationTransactions[_transactionID].transporter = msg.sender;
     }
 
-    // function calculateDonatedVolume(
+    // function calculatePayment(
     //     uint256 _transactionID
     // ) internal view returns (uint256) {
     //     require(
@@ -520,42 +560,31 @@ contract BloodDonationBlockchainSystem {
     //             TransactionStatus.Completed,
     //         "Transaction not completed"
     //     );
-    //     return donationTransactions[_transactionID].donatedVolume;
+    //     // Assuming a fixed payment rate for simplicity
+    //     uint256 _donatedVolume = donationTransactions[_transactionID]
+    //         .donatedVolume;
+    //     uint256 paymentRate = 1 gwei; // 1gwei/ml
+    //     return _donatedVolume * paymentRate;
     // }
 
-    function calculatePayment(
-        uint256 _transactionID
-    ) internal view returns (uint256) {
-        require(
-            donationTransactions[_transactionID].status ==
-                TransactionStatus.Completed,
-            "Transaction not completed"
-        );
-        // Assuming a fixed payment rate for simplicity
-        uint256 _donatedVolume = donationTransactions[_transactionID]
-            .donatedVolume;
-        uint256 paymentRate = 1 gwei; // 1gwei/ml
-        return _donatedVolume * paymentRate;
-    }
+    // function addBloodSupply(string memory _bloodType, uint256 _volume) public {
+    //     // onlyMedicalStaff
+    //     require(_volume > 0, "Volume must be greater than zero");
+    //     require(
+    //         bloodSupplies[_bloodType].status != BloodSupplyStatus.Requested,
+    //         "Blood type already requested"
+    //     );
 
-    function addBloodSupply(string memory _bloodType, uint256 _volume) public {
-        // onlyMedicalStaff
-        require(_volume > 0, "Volume must be greater than zero");
-        require(
-            bloodSupplies[_bloodType].status != BloodSupplyStatus.Requested,
-            "Blood type already requested"
-        );
-
-        if (bloodSupplies[_bloodType].status == BloodSupplyStatus.Available) {
-            bloodSupplies[_bloodType].volume += _volume;
-        } else {
-            bloodSupplies[_bloodType] = BloodSupply({
-                bloodType: _bloodType,
-                volume: _volume,
-                status: BloodSupplyStatus.Available
-            });
-        }
-    }
+    //     if (bloodSupplies[_bloodType].status == BloodSupplyStatus.Available) {
+    //         bloodSupplies[_bloodType].volume += _volume;
+    //     } else {
+    //         bloodSupplies[_bloodType] = BloodSupply({
+    //             bloodType: _bloodType,
+    //             volume: _volume,
+    //             status: BloodSupplyStatus.Available
+    //         });
+    //     }
+    // }
 
     // function requestBloodType(
     //     string memory _bloodType,
@@ -575,23 +604,8 @@ contract BloodDonationBlockchainSystem {
         // For example, update the blood supply status or create a new transaction record
     // }
 
-    // function generateTransactionID() internal returns (uint256) {
-    //     transactionCounter++;
-    //     return
-    //         uint256(
-    //             keccak256(abi.encodePacked(block.timestamp, transactionCounter))
-    //         );
-    // }
-
     function compareString(string memory _a, string memory _b) internal pure returns(bool) {
         return keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b));
     }
 
-    function generateRecordID() internal returns (uint256) {
-        recordCounter++;
-        return
-            uint256(
-                keccak256(abi.encodePacked(block.timestamp, recordCounter))
-            );
-    }
 }

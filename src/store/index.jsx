@@ -12,10 +12,13 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   transporters: [],
   transporterName: "",
   medicalCenters: [],
+  medicalRecords: [],
   medicalCenterName: "",
   donationTransactions: [],
   transactionId: "",
   contract: null,
+  smartcontractError: "Transporter Registration failed...",
+  donorError: "Donor Registration failed...",
 })
 
 const setAlert = (msg, color = 'green') => {

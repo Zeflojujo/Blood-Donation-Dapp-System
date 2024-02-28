@@ -9,10 +9,10 @@ import {
   import { useState } from 'react'
   import { FaTimes } from 'react-icons/fa'
 //   import { create } from 'ipfs-http-client'
-  import { addDonor, mintNFT } from '../../BlockchainService'
+  import { addDonor } from '../../BlockchainService'
   import Donate from "../../assets/blood-donation.jpg"
 import DonorTable from "../components/DonorTable"
-import { Link } from "react-router-dom"
+// import { Link } from "react-router-dom"
 import Alert from "../../+homedirectory/components/Alert"
 import Loading from "../../+homedirectory/components/Loding"
   
@@ -72,7 +72,7 @@ import Loading from "../../+homedirectory/components/Loding"
         
       } catch (error) {
         console.log('Error uploading file: ', error)
-        setAlert('Registration failed...', 'red')
+        setAlert('Donor Registration failed...', 'red')
       }
     }
 
@@ -131,9 +131,8 @@ import Loading from "../../+homedirectory/components/Loding"
           justify-center bg-black bg-opacity-50 transform
           transition-transform duration-300 ${modal}`}
       >
-        {/* ${modal} */}
-        <div className="bg-[#151c25] shadow-xl shadow-[#e32970] rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
-          <form className="flex flex-col">
+        <div className="shadow-xl rounded-xl w-11/12 md:w-2/5 h-7/12 p-6 bg-gray-100 shadow-blue-600 dark:bg-[#151c25] dark:shadow-[#e32970]">
+          <form className="flex flex-col" onSubmit={handleSubmit}>
             <div className="flex flex-row justify-between items-center">
               <p className="font-semibold text-gray-400">Register Donor</p>
               <button
@@ -155,11 +154,9 @@ import Loading from "../../+homedirectory/components/Loding"
               </div>
             </div>
   
-            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
+            <div className="mt-4">
               <input
-                className="block w-full text-sm
-                  text-slate-500 bg-transparent border-0
-                  focus:outline-none focus:ring-0"
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="text"
                 name="publicAddress"
                 placeholder="publicAddress"
@@ -169,11 +166,9 @@ import Loading from "../../+homedirectory/components/Loding"
               />
             </div>
   
-            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
+            <div className="mt-4">
               <input
-                className="block w-full text-sm
-                  text-slate-500 bg-transparent border-0
-                  focus:outline-none focus:ring-0"
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="text"
                 name="name"
                 placeholder="name"
@@ -183,11 +178,9 @@ import Loading from "../../+homedirectory/components/Loding"
               />
             </div>
 
-            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
+            <div className="mt-4">
               <input
-                className="block w-full text-sm
-                  text-slate-500 bg-transparent border-0
-                  focus:outline-none focus:ring-0"
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="text"
                 name="phoneNumber"
                 placeholder="phoneNumber"
@@ -197,11 +190,9 @@ import Loading from "../../+homedirectory/components/Loding"
               />
             </div>
 
-            <div className="flex flex-row justify-between items-center bg-gray-800 rounded-xl mt-5">
+            <div className="mt-4">
               <input
-                className="block w-full text-sm
-                  text-slate-500 bg-transparent border-0
-                  focus:outline-none focus:ring-0"
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="text"
                 name="bloodType"
                 placeholder="bloodType"
@@ -214,10 +205,9 @@ import Loading from "../../+homedirectory/components/Loding"
   
             <button
               type="submit"
-              onClick={handleSubmit}
               className="flex flex-row justify-center items-center
-                w-full text-white text-xs bg-[#e32970]
-                hover:bg-[#bd255f] py-2 px-5 rounded-full
+                w-full text-white text-base md:text-lg bg-blue-700 dark:bg-[#e32970]
+                hover:bg-[#bd255f] py-2 px-5 rounded-lg
                 drop-shadow-xl border border-transparent
                 hover:bg-transparent hover:text-[#e32970]
                 hover:border hover:border-[#bd255f]

@@ -7,6 +7,7 @@ import {
   displayDonationTransaction,
   displayDonors,
   displayMedicalCenters,
+  displayMedicalRecord,
   displayTransporters,
   isWallectConnected,
 } from "./BlockchainService";
@@ -30,6 +31,8 @@ import CPDashboard from "./collectionPoint/pages/CPDashboard";
 import MCDashboard from "./medicalcenter/pages/MCDashboard";
 import DSDashboard from "./damuSalama/pages/DSDashboard";
 import DonationTransactionRecord from "./Donor/pages/DonationTransactionRecord";
+import TransDashboard from "./transporter/pages/TransDashboard";
+import InitiateTransportation from "./transporter/pages/InitiateTransportation";
 
 function App() {
   useEffect(() => {
@@ -39,6 +42,7 @@ function App() {
       await displayTransporters();
       await displayMedicalCenters();
       await displayDonationTransaction();
+      await displayMedicalRecord();
     };
     isConnected();
   }, []);
@@ -79,9 +83,17 @@ function App() {
         <Route path="/donor/login" element={<DonorLogin />} />
         <Route path="/donor/dashboard" element={<DNDashboard />} />
         <Route path="/donor/records" element={<DonationTransactionRecord />} />
+
+        {/* Transporter */}
         <Route path="/transporter/login" element={<TransLogin />} />
-        <Route path="/collection-point/login" element={<CPLogin />} />
+        <Route path="/transporter/dashboard" element={<TransDashboard />} />
+        <Route
+          path="/transporter/initiate-transportation"
+          element={<InitiateTransportation />}
+        />
+
         {/* Collection Point Routes */}
+        <Route path="/collection-point/login" element={<CPLogin />} />
         <Route path="/collection-point/dashboard" element={<CPDashboard />} />
         <Route
           path="/collection-point/register-donor"
