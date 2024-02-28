@@ -90,9 +90,11 @@ contract BloodDonationBlockchainSystem {
     mapping(address => Donor) public donors;
     mapping(address => Transporter) public transporters;
     mapping(address => MedicalCenter) public medicalsCenters;
-    mapping(uint256 => DonationTransaction) public donationTransactions;
+    mapping(address => mapping(uint256 => MedicalRecord)) public medicalRecords;
+    // mapping(uint256 => DonationTransaction) public donationTransactions;
+    mapping(address => mapping(uint256 => DonationTransaction)) public donationTransactions;
 
-    mapping(uint256 => MedicalRecord) public medicalRecords;
+    // mapping(uint256 => MedicalRecord) public medicalRecords;
     mapping(uint256 => TransportationRecord) public transportationRecords;
     mapping(string => BloodSupply) public bloodSupplies;
 
@@ -134,12 +136,12 @@ contract BloodDonationBlockchainSystem {
         sysOwnerMap[owner] = sysowner;
     }
 
-    function checkSystemOwnerLogin(address _SYSPublicAddress, string memory _password) public view returns (bool) {
-        // require(!medicalsCenters[_MCPublicAddress].isLogin, "You're already logged in");
-        require(compareString(sysOwnerMap[_SYSPublicAddress].password, _password), "Invalid address or password");
+    // function checkSystemOwnerLogin(address _SYSPublicAddress, string memory _password) public view returns (bool) {
+    //     // require(!medicalsCenters[_MCPublicAddress].isLogin, "You're already logged in");
+    //     require(compareString(sysOwnerMap[_SYSPublicAddress].password, _password), "Invalid address or password");
 
-        return true;
-    }
+    //     return true;
+    // }
 
     // function systemOwnerLogin(address _MCPublicAddress, string memory _password) public {
     //     require(checkSystemOwnerLogin(_MCPublicAddress, _password), "Invalid login credentials");
@@ -347,6 +349,7 @@ contract BloodDonationBlockchainSystem {
 
     function donateBloodToMedicalCenter(
         address _donorPublicAddress,
+        address _medicalCenterPublicAddress,
         uint256 _volume
     ) public {
         require(
@@ -359,7 +362,7 @@ contract BloodDonationBlockchainSystem {
         );
 
         uint256 transactionID = block.timestamp;
-        donationTransactions[transactionID] = DonationTransaction({
+        donationTransactions[_medicalCenterPublicAddress][transactionID] = DonationTransaction({
             transactionID: transactionID,
             donor: _donorPublicAddress,
             recipient: address(0),
@@ -390,6 +393,7 @@ contract BloodDonationBlockchainSystem {
     }
 
     function getDonationTransaction(
+        address _medicalCenterPublicAddress,
         uint256 _transactionID
     )
         public
@@ -407,7 +411,7 @@ contract BloodDonationBlockchainSystem {
             string memory bloodTestResult
         )
     {
-        DonationTransaction memory donationTransaction = donationTransactions[
+        DonationTransaction memory donationTransaction = donationTransactions[_medicalCenterPublicAddress][
             _transactionID
         ];
         transactionID = donationTransaction.transactionID;
@@ -426,6 +430,53 @@ contract BloodDonationBlockchainSystem {
 
     // ---------------- Start Complete Donation  ------------------------
 
+    // function completeDonationToMedicalCenter(
+    //     uint256 _transactionID,
+    //     string memory _medicalCenter,
+    //     uint256 _bloodPressure,
+    //     uint256 _hemoglobinLevel,
+    //     string memory _bloodTestResults
+    // ) public {
+    //     require(
+    //         donationTransactions[_transactionID].status ==
+    //             TransactionStatus.Pending,
+    //         "Invalid transaction status"
+    //     );
+    //     require(
+    //         donationTransactions[_transactionID].donor != address(0),
+    //         "Invalid donor address"
+    //     );
+
+    //     donationTransactions[_transactionID].medicalStaff = msg.sender;
+    //     donationTransactions[_transactionID].medicalCenter = _medicalCenter;
+    //     donationTransactions[_transactionID].status = TransactionStatus.Completed;
+    //     donationTransactions[_transactionID].bloodTestResult = _bloodTestResults;
+
+    //     uint256 recordID = block.timestamp;
+    //     medicalRecords[recordID] = MedicalRecord({
+    //         recordID: recordID,
+    //         donor: donationTransactions[_transactionID].donor,
+    //         medicalStaff: msg.sender,
+    //         bloodPressure: _bloodPressure,
+    //         hemoglobinLevel: _hemoglobinLevel,
+    //         bloodTestResults: _bloodTestResults
+    //         // donationHistory: new uint256[](0)
+    //     });
+    //     medicalRecordsArr.push(recordID);
+
+    //     // donors[donationTransactions[_transactionID].donor].donationHistory.push(
+    //     //     _transactionID
+    //     // );
+
+    //     // uint256 payment = calculatePayment(
+    //     //     donors[donationTransactions[_transactionID].donor].donatedVolume
+    //     // );
+    //     // uint256 payment = calculatePayment(_transactionID);
+    //     // donors[donationTransactions[_transactionID].donor]
+    //     //     .totalPayment += payment;
+    //     // payable(msg.sender).transfer(payment);
+    // }
+
     function completeDonationToMedicalCenter(
         uint256 _transactionID,
         string memory _medicalCenter,
@@ -434,24 +485,24 @@ contract BloodDonationBlockchainSystem {
         string memory _bloodTestResults
     ) public {
         require(
-            donationTransactions[_transactionID].status ==
+            donationTransactions[msg.sender][_transactionID].status ==
                 TransactionStatus.Pending,
             "Invalid transaction status"
         );
         require(
-            donationTransactions[_transactionID].donor != address(0),
+            donationTransactions[msg.sender][_transactionID].donor != address(0),
             "Invalid donor address"
         );
 
-        donationTransactions[_transactionID].medicalStaff = msg.sender;
-        donationTransactions[_transactionID].medicalCenter = _medicalCenter;
-        donationTransactions[_transactionID].status = TransactionStatus.Completed;
-        donationTransactions[_transactionID].bloodTestResult = _bloodTestResults;
+        donationTransactions[msg.sender][_transactionID].medicalStaff = msg.sender;
+        donationTransactions[msg.sender][_transactionID].medicalCenter = _medicalCenter;
+        donationTransactions[msg.sender][_transactionID].status = TransactionStatus.Completed;
+        donationTransactions[msg.sender][_transactionID].bloodTestResult = _bloodTestResults;
 
         uint256 recordID = block.timestamp;
-        medicalRecords[recordID] = MedicalRecord({
+        medicalRecords[msg.sender][recordID] = MedicalRecord({
             recordID: recordID,
-            donor: donationTransactions[_transactionID].donor,
+            donor: donationTransactions[msg.sender][_transactionID].donor,
             medicalStaff: msg.sender,
             bloodPressure: _bloodPressure,
             hemoglobinLevel: _hemoglobinLevel,
@@ -482,6 +533,7 @@ contract BloodDonationBlockchainSystem {
     }
 
     function getMedicalRecord(
+        address _medicalCenterAddress,
         uint256 _medicalRecordID
     )
         public
@@ -495,7 +547,7 @@ contract BloodDonationBlockchainSystem {
             string memory bloodTestResult
         )
     {
-        MedicalRecord memory medicalRecord = medicalRecords[
+        MedicalRecord memory medicalRecord = medicalRecords[_medicalCenterAddress][
             _medicalRecordID
         ];
         medicalRecordID = medicalRecord.recordID;
@@ -509,34 +561,36 @@ contract BloodDonationBlockchainSystem {
     // ---------------- End Complete Donation  ------------------------
 
     function initiateTransportation(
+        address _medicalCenterPublicAddress,
         uint256 _transactionID,
         address _recipient,
         string memory _medicalCenter
     ) public {
         require(
-            donationTransactions[_transactionID].status ==
+            donationTransactions[_medicalCenterPublicAddress][_transactionID].status ==
                 TransactionStatus.Completed,
             "Medical center process not completed"
         );
 
         uint256 transactionID = block.timestamp;
-        donationTransactions[transactionID] = DonationTransaction({
+        donationTransactions[_medicalCenterPublicAddress][transactionID] = DonationTransaction({
             transactionID: transactionID,
-            donor: donationTransactions[_transactionID].donor,
+            donor: donationTransactions[_medicalCenterPublicAddress][_transactionID].donor,
             recipient: _recipient,
             medicalStaff: msg.sender,
             transporter: msg.sender,
-            bloodType: donationTransactions[_transactionID].bloodType,
-            donationDate: donationTransactions[_transactionID].donationDate,
-            status: donationTransactions[_transactionID].status,
+            bloodType: donationTransactions[_medicalCenterPublicAddress][_transactionID].bloodType,
+            donationDate: donationTransactions[_medicalCenterPublicAddress][_transactionID].donationDate,
+            status: donationTransactions[_medicalCenterPublicAddress][_transactionID].status,
             medicalCenter: _medicalCenter,
-            donatedVolume: donors[donationTransactions[_transactionID].donor]
+            donatedVolume: donors[donationTransactions[_medicalCenterPublicAddress][_transactionID].donor]
                 .donatedVolume,
-            bloodTestResult: donationTransactions[_transactionID].bloodTestResult
+            bloodTestResult: donationTransactions[_medicalCenterPublicAddress][_transactionID].bloodTestResult
         });
     }
 
     function completeTransportation(
+        address _medicalCenterPublicAddress,
         uint256 _recordID,
         uint256 _transactionID
     ) public {
@@ -549,7 +603,7 @@ contract BloodDonationBlockchainSystem {
         transportationRecords[_recordID].deliveryDateTime = block.timestamp;
         transportationRecords[_recordID].status = TransportationStatus
             .Delivered;
-        donationTransactions[_transactionID].transporter = msg.sender;
+        donationTransactions[_medicalCenterPublicAddress][_transactionID].transporter = msg.sender;
     }
 
     // function calculatePayment(

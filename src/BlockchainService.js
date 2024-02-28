@@ -54,40 +54,6 @@ const isWallectConnected = async () => {
   }
 };
 
-// const addDonor = async ({
-//   publicAddress,
-//   name,
-//   bloodType,
-//   phoneNumber,
-//   password,
-// }) => {
-//   try {
-//     const contract = await getEtheriumContract();
-//     const account = getGlobalState("connectedAccount");
-
-//     await contract.methods
-//       .addDonor(publicAddress, name, bloodType, phoneNumber, password)
-//       .send({ from: account, gas: 1000000 });
-
-//     return true;
-//   } catch (error) {
-//     if (
-//       error.message.includes("Only collection point can perform this action")
-//     ) {
-//       const errorMessage = "Please, Login with administrator wallet account";
-//       setGlobalState("donorError", errorMessage);
-//     } else if (error.message.includes("Donor is already registered")) {
-//       const errorMessage = "Donor is already registered";
-//       setGlobalState("donorError", errorMessage);
-//     } else if (error.message.includes("Invalid public address")) {
-//       const errorMessage = "Invalid publicAddress or Password";
-//       setGlobalState("donorError", errorMessage);
-//     } else {
-//       setGlobalState("smartcontractError", "Donor Registration Failed");
-//     }
-//   }
-// };
-
 const addDonor = async ({
   publicAddress,
   name,
@@ -97,53 +63,14 @@ const addDonor = async ({
 }) => {
   try {
     const contract = await getEtheriumContract();
-    // const web3 = getWeb3Instance(); // Assuming you have a function to get web3 instance
     const account = getGlobalState("connectedAccount");
 
-    // Get the nonce for the account
-    const nonce = await window.web3.eth.getTransactionCount(account);
+    await contract.methods
+      .addDonor(publicAddress, name, bloodType, phoneNumber, password)
+      .send({ from: account, gas: 1000000 });
 
-    // Create a transaction object with the method data
-    const transactionObject = contract.methods.addDonor(
-      publicAddress,
-      name,
-      bloodType,
-      phoneNumber,
-      password
-    );
-
-    // Estimate gas
-    const gasEstimate = await transactionObject.estimateGas();
-
-    // Get the gas price
-    const gasPrice = await window.web3.eth.getGasPrice();
-
-    // Create a raw transaction
-    const rawTransaction = {
-      nonce: window.web3.utils.toHex(nonce),
-      gasLimit: window.web3.utils.toHex(gasEstimate),
-      gasPrice: window.web3.utils.toHex(gasPrice),
-      to: contract.options.address,
-      data: transactionObject.encodeABI(),
-    };
-
-    // Sign the transaction
-    const signedTransaction = await window.web3.eth.accounts.signTransaction(
-      rawTransaction,
-      "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d" // Replace privateKey with the private key of the account
-    );
-
-    // Send the signed transaction
-    const receipt = await window.web3.eth.sendSignedTransaction(
-      signedTransaction.rawTransaction
-    );
-
-    console.log("Registration receipt: ", receipt);
-
-    // Handle success
     return true;
   } catch (error) {
-    // Handle errors
     if (
       error.message.includes("Only collection point can perform this action")
     ) {
@@ -160,6 +87,79 @@ const addDonor = async ({
     }
   }
 };
+
+// const addDonor = async ({
+//   publicAddress,
+//   name,
+//   bloodType,
+//   phoneNumber,
+//   password,
+// }) => {
+//   try {
+//     const contract = await getEtheriumContract();
+//     // const web3 = getWeb3Instance(); // Assuming you have a function to get web3 instance
+//     const account = getGlobalState("connectedAccount");
+
+//     // Get the nonce for the account
+//     const nonce = await window.web3.eth.getTransactionCount(account);
+
+//     // Create a transaction object with the method data
+//     const transactionObject = contract.methods.addDonor(
+//       publicAddress,
+//       name,
+//       bloodType,
+//       phoneNumber,
+//       password
+//     );
+
+//     // Estimate gas
+//     const gasEstimate = await transactionObject.estimateGas();
+
+//     // Get the gas price
+//     const gasPrice = await window.web3.eth.getGasPrice();
+
+//     // Create a raw transaction
+//     const rawTransaction = {
+//       nonce: window.web3.utils.toHex(nonce),
+//       gasLimit: window.web3.utils.toHex(gasEstimate),
+//       gasPrice: window.web3.utils.toHex(gasPrice),
+//       to: contract.options.address,
+//       data: transactionObject.encodeABI(),
+//     };
+
+//     // Sign the transaction
+//     const signedTransaction = await window.web3.eth.accounts.signTransaction(
+//       rawTransaction,
+//       "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d" // Replace privateKey with the private key of the account
+//     );
+
+//     // Send the signed transaction
+//     const receipt = await window.web3.eth.sendSignedTransaction(
+//       signedTransaction.rawTransaction
+//     );
+
+//     console.log("Registration receipt: ", receipt);
+
+//     // Handle success
+//     return true;
+//   } catch (error) {
+//     // Handle errors
+//     if (
+//       error.message.includes("Only collection point can perform this action")
+//     ) {
+//       const errorMessage = "Please, Login with administrator wallet account";
+//       setGlobalState("donorError", errorMessage);
+//     } else if (error.message.includes("Donor is already registered")) {
+//       const errorMessage = "Donor is already registered";
+//       setGlobalState("donorError", errorMessage);
+//     } else if (error.message.includes("Invalid public address")) {
+//       const errorMessage = "Invalid publicAddress or Password";
+//       setGlobalState("donorError", errorMessage);
+//     } else {
+//       setGlobalState("smartcontractError", "Donor Registration Failed");
+//     }
+//   }
+// };
 
 const registerTransporter = async ({
   publicAddress,
@@ -368,6 +368,7 @@ const displayDonationTransaction = async () => {
     if (!ethereum) return window.alert("Please install Metamask");
 
     const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
 
     const transactionIdArray = await contract.methods
       .getDonationTransactionArr()
@@ -383,9 +384,15 @@ const displayDonationTransaction = async () => {
       const transactionId = transactionIdArray[i];
       // console.log(`the registration number is: ${voterRegNumber}`);
       const _donationTransaction = await contract.methods
-        .getDonationTransaction(transactionId)
+        .getDonationTransaction(account, transactionId)
         .call();
-      donationTransactionData.push(_donationTransaction);
+      console.log(
+        "donation of blood for specific medical center: ",
+        _donationTransaction.transactionID
+      );
+      if (_donationTransaction.transactionID !== 0n) {
+        donationTransactionData.push(_donationTransaction);
+      }
       // console.log("Donation Transaction :", _donationTransaction);
     }
 
@@ -400,6 +407,7 @@ const displayMedicalRecord = async () => {
     if (!ethereum) return window.alert("Please install Metamask");
 
     const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
 
     const medicalRecordIdArray = await contract.methods
       .getMedicalRecordsArr()
@@ -415,9 +423,15 @@ const displayMedicalRecord = async () => {
       const medicalRecordId = medicalRecordIdArray[i];
       // console.log(`the registration number is: ${voterRegNumber}`);
       const _donationTransaction = await contract.methods
-        .getMedicalRecord(medicalRecordId)
+        .getMedicalRecord(account, medicalRecordId)
         .call();
-      medicalRecordData.push(_donationTransaction);
+      console.log(
+        "let me see donationTransaction details: ",
+        _donationTransaction.medicalRecordID
+      );
+      if (_donationTransaction.medicalRecordID !== 0n) {
+        medicalRecordData.push(_donationTransaction);
+      }
       // console.log("Donation Transaction :", _donationTransaction);
     }
 
@@ -428,7 +442,8 @@ const displayMedicalRecord = async () => {
 };
 
 const initiateDonationTransaction = async ({
-  publicAddress,
+  MCPublicAddress,
+  DNPublicAddress,
   donatedVolume,
 }) => {
   try {
@@ -436,7 +451,11 @@ const initiateDonationTransaction = async ({
     const account = getGlobalState("connectedAccount");
 
     await contract.methods
-      .donateBloodToMedicalCenter(publicAddress, donatedVolume)
+      .donateBloodToMedicalCenter(
+        MCPublicAddress,
+        DNPublicAddress,
+        donatedVolume
+      )
       .send({ from: account, gas: 1000000 });
 
     return true;

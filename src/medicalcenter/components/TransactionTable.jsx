@@ -125,7 +125,7 @@ const TransactionTable = () => {
               <th className="py-2 px-4 border-b text-start text-lg uppercase">BloodType</th>
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Vol.(in ML)</th>
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Donat Date</th>
-              <th className="py-2 px-4 border-b text-start text-lg uppercase">Medical Center</th>
+              {/* <th className="py-2 px-4 border-b text-start text-lg uppercase">Medical Center</th> */}
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Status</th>
               <th className="py-2 px-4 border-b text-start text-lg uppercase">BloodTestResult</th>
 
@@ -155,7 +155,7 @@ const TransactionTable = () => {
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.bloodType.toString()}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.donatedVolume.toString()}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.donationDate.toString()}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.medicalCenter}</td>
+                {/* <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.medicalCenter}</td> */}
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{handleConvertTransactionStatus(donation.status.toString())}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.bloodTestResult}</td>
 

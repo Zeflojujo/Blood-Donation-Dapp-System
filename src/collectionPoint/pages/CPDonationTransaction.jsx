@@ -5,8 +5,9 @@ import {
     setGlobalState,
     setLoadingMsg,
     setAlert,
+    useGlobalState,
   } from '../../store'
-  import { useState } from 'react'
+  import { useEffect, useState } from 'react'
   import { initiateDonationTransaction } from '../../BlockchainService'
 import Alert from "../../+homedirectory/components/Alert"
 import Loading from "../../+homedirectory/components/Loding"
@@ -14,8 +15,12 @@ import Loading from "../../+homedirectory/components/Loding"
   
   const CPDonationTransaction = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false)
+    const [medicalCenters] = useGlobalState("medicalCenters");
+    const [allMedicalCenters, setAllMedicalCenters] = useState([])
+
     // const [modal] = useGlobalState('modal')
-    const [publicAddress, setPublicAddress] = useState('')
+    const [MCPublicAddress, setMCPublicAddress] = useState('')
+    const [DNPublicAddress, setDNPublicAddress] = useState('')
     const [donatedVolume, setDonatedVolume] = useState('')
 
     const toggleSidebar = () => {
@@ -25,12 +30,17 @@ import Loading from "../../+homedirectory/components/Loding"
     //  const handleAddDoonorModel = () => {
     //  setGlobalState('modal', 'scale-100')
     // }
+    
+      useEffect(() => {
+        setAllMedicalCenters(medicalCenters)
+        console.log(medicalCenters)
+      }, [medicalCenters])
   
 
     const handleDonationTransaction = async (e) => {
         e.preventDefault()
 
-        if (!publicAddress || !donatedVolume) return
+        if (!MCPublicAddress || !DNPublicAddress || !donatedVolume) return
 
         setGlobalState('modal', 'scale-0')
         setGlobalState('loading', { show: true, msg: 'Blood donating...' })
@@ -39,7 +49,7 @@ import Loading from "../../+homedirectory/components/Loding"
         try {
     
             setLoadingMsg('Intializing transaction...')
-            const result = await initiateDonationTransaction({ publicAddress, donatedVolume })
+            const result = await initiateDonationTransaction({ MCPublicAddress, DNPublicAddress, donatedVolume })
     
             if(result){
             resetForm()
@@ -56,7 +66,8 @@ import Loading from "../../+homedirectory/components/Loding"
     }
   
     const resetForm = () => {
-      setPublicAddress('')
+      setMCPublicAddress('')
+      setDNPublicAddress('')
       setDonatedVolume('')
     }
   
@@ -87,20 +98,60 @@ import Loading from "../../+homedirectory/components/Loding"
                          <div className=" w-full rounded-md px-0 py-4 md:px-6 md:py-8 mt-4 bg-white dark:bg-transparent dark:text-gray-300">
                             <form className="flex flex-col" onSubmit={handleDonationTransaction}>
                     
-                                <div className="mt-4">
+                                {/* <div className="mt-4">
                                 <label
-                                    htmlFor="publicAddress"
+                                    htmlFor="MCPublicAddress"
                                     className="block text-sm font-medium text-gray-600 dark:text-gray-300"
                                 >
-                                    Public Address:
+                                    Medical Center Public Address:
                                 </label>
                                 <input
                                     className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                                     type="text"
-                                    name="publicAddress"
-                                    placeholder="publicAddress"
-                                    onChange={(e) => setPublicAddress(e.target.value)}
-                                    value={publicAddress}
+                                    name="MCPublicAddress"
+                                    placeholder="MCPublicAddress"
+                                    onChange={(e) => setMCPublicAddress(e.target.value)}
+                                    value={MCPublicAddress}
+                                    required
+                                />
+                                </div> */}
+
+<div className="mt-4">
+    <label htmlFor="MCPublicAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+        Medical Center Public Address:
+    </label>
+    <select
+        className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
+        name="MCPublicAddress"
+        onChange={(e) => setMCPublicAddress(e.target.value)}
+        value={MCPublicAddress}
+        required
+    >
+        <option value="" disabled>Select Medical Center Public Address</option>
+        {allMedicalCenters.map((medicalCenter, index) => (
+            <option key={index} value={`${medicalCenter.MCPublicAddress}`}>{medicalCenter.name}</option>
+        ))}
+        <svg class="absolute right-0 top-0 h-full w-10 text-gray-600 pointer-events-none" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </select>
+</div>
+
+
+                                <div className="mt-4">
+                                <label
+                                    htmlFor="DNPublicAddress"
+                                    className="block text-sm font-medium text-gray-600 dark:text-gray-300"
+                                >
+                                    Donor Public Address:
+                                </label>
+                                <input
+                                    className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                                    type="text"
+                                    name="DNPublicAddress"
+                                    placeholder="DNPublicAddress"
+                                    onChange={(e) => setDNPublicAddress(e.target.value)}
+                                    value={DNPublicAddress}
                                     required
                                 />
                                 </div>
