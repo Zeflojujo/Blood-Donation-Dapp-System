@@ -1,6 +1,7 @@
 // import Identicon from 'react-identicons'
 import { setGlobalState, useGlobalState, truncate } from '../../store'
 import donate from "../../assets/system.jpg"
+import { Link } from 'react-router-dom'
 
 const Hero = () => {
   const [connectedAccount] = useGlobalState('connectedAccount')
@@ -25,14 +26,15 @@ const Hero = () => {
         </div>
 
         <div className="flex flex-row mt-5">
-          <button
+          <Link
+            to="/donor/login"
             className="shadow-xl shadow-black text-white
             bg-[#e32970] hover:bg-[#bd255f]
             rounded-full cursor-pointer py-2 px-4"
             onClick={onCreatedNFT}
           >
             Donate Now
-          </button>
+          </Link>
         </div>
 
         <div className="w-3/4 flex justify-between items-center mt-5">

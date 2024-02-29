@@ -348,17 +348,13 @@ contract BloodDonationBlockchainSystem {
     // ---------------- Start Donation initialization ---------------------
 
     function donateBloodToMedicalCenter(
-        address _donorPublicAddress,
         address _medicalCenterPublicAddress,
+        address _donorPublicAddress,
         uint256 _volume
     ) public {
         require(
             donors[_donorPublicAddress].isRegistered == true,
             "Please register donor first"
-        );
-        require(
-            keccak256(abi.encodePacked(donors[_donorPublicAddress].bloodType)) != keccak256(abi.encodePacked("Other")),
-            "Donor has already initiated a donation"
         );
 
         uint256 transactionID = block.timestamp;

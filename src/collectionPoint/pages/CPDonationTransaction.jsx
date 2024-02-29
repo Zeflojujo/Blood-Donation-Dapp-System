@@ -41,7 +41,8 @@ import Loading from "../../+homedirectory/components/Loding"
         e.preventDefault()
 
         if (!MCPublicAddress || !DNPublicAddress || !donatedVolume) return
-
+        console.log("medical center address: ", MCPublicAddress)
+        console.log("donor address: ", DNPublicAddress)
         setGlobalState('modal', 'scale-0')
         setGlobalState('loading', { show: true, msg: 'Blood donating...' })
 
@@ -60,7 +61,7 @@ import Loading from "../../+homedirectory/components/Loding"
 
         //   window.location.reload()
         } catch (error) {
-        //   console.log('Error registering donor: ', error)
+          console.log('Error registering donor: ', error)
             setAlert('Donation failed...', 'red')
         }
     }
@@ -116,26 +117,26 @@ import Loading from "../../+homedirectory/components/Loding"
                                 />
                                 </div> */}
 
-<div className="mt-4">
-    <label htmlFor="MCPublicAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
-        Medical Center Public Address:
-    </label>
-    <select
-        className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
-        name="MCPublicAddress"
-        onChange={(e) => setMCPublicAddress(e.target.value)}
-        value={MCPublicAddress}
-        required
-    >
-        <option value="" disabled>Select Medical Center Public Address</option>
-        {allMedicalCenters.map((medicalCenter, index) => (
-            <option key={index} value={`${medicalCenter.MCPublicAddress}`}>{medicalCenter.name}</option>
-        ))}
-        <svg class="absolute right-0 top-0 h-full w-10 text-gray-600 pointer-events-none" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </select>
-</div>
+                                <div className="mt-4">
+                                    <label htmlFor="MCPublicAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+                                        Medical Center Public Address:
+                                    </label>
+                                    <select
+                                        className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
+                                        name="MCPublicAddress"
+                                        onChange={(e) => setMCPublicAddress(e.target.value)}
+                                        value={MCPublicAddress}
+                                        required
+                                    >
+                                        <option value="" disabled>Select Medical Center Public Address</option>
+                                        {allMedicalCenters.map((medicalCenter, index) => (
+                                            <option key={index} value={medicalCenter.MCPublicAddress}>{medicalCenter.name}</option>
+                                        ))}
+                                        <svg class="absolute right-0 top-0 h-full w-10 text-gray-600 pointer-events-none" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </select>
+                                </div>
 
 
                                 <div className="mt-4">
