@@ -2,16 +2,17 @@
 import { Link } from 'react-router-dom'
 import { connectWallet } from '../../BlockchainService'
 import { useGlobalState, truncate } from '../../store'
+import zeflotechLogo from '../../assets/zeflojujoLogo.jpeg'
 
 const Header = () => {
   const [connectedAccount] = useGlobalState('connectedAccount')
   return (
     <nav className="w-4/5 flex md:justify-center justify-between items-center py-4 mx-auto">
       <div className="md:flex-[0.5] flex-initial justify-center items-center">
-        {/* <img */}
-          {/* className="w-32 cursor-pointer"
-          src={timelessLogo}
-          alt="Timeless Logo"
+        {/* <img
+          className="w-32 cursor-pointer"
+          src={zeflotechLogo}
+          alt="zefloTech Logo"
         /> */}
       </div>
 
