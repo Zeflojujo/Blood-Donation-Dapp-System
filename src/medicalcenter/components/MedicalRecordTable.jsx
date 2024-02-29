@@ -42,7 +42,8 @@ const MedicalRecordTable = () => {
             <tr className='border-none'>
               <th className="py-2 px-4 border-b text-start text-lg">S/N</th>
               <th className="py-2 px-4 border-b text-start text-lg uppercase">MedicalRecord_ID</th>
-              <th className="py-2 px-4 border-b text-start text-lg uppercase">Medical Center</th>
+              <th className="py-2 px-4 border-b text-start text-lg uppercase">TransactionID</th>
+              {/* <th className="py-2 px-4 border-b text-start text-lg uppercase">Medical Center</th> */}
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Blood Pressure</th>
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Haemoglobin</th>
               <th className="py-2 px-4 border-b text-start text-lg uppercase">Blood Test Result</th>
@@ -60,7 +61,8 @@ const MedicalRecordTable = () => {
               >
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{index+1}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{medicalRecord.medicalRecordID.toString()}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(medicalRecord.medicalStaff, 7, 5, 15)}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{medicalRecord.transactionID.toString()}</td>
+                {/* <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(medicalRecord.medicalStaff, 7, 5, 15)}</td> */}
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{medicalRecord.bloodPressure.toString()}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{medicalRecord.hemoglobinLevel.toString()}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{medicalRecord.bloodTestResult}</td>

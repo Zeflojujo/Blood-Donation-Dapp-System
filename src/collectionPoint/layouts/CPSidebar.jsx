@@ -7,6 +7,8 @@ import { BsDatabaseFillAdd } from "react-icons/bs"
 import { IoIosArrowForward } from "react-icons/io"
 import { FaKeycdn } from "react-icons/fa6"
 import { NavLink } from "react-router-dom"
+import { MdBloodtype } from "react-icons/md";
+
 import "./CPSidebar.css"
 
 const CPSidebar = ({ isOpen, toggleSidebar }) => {
@@ -29,8 +31,8 @@ const CPSidebar = ({ isOpen, toggleSidebar }) => {
             >
                 <div className="flex items-center border-b-2 border-b-gray-300 pb-3 border-opacity-35">
                     <span>
-                        <FaWineBottle
-                            className={`cursor-pointer mx-5 duration-500 text-4xl text-purple-800`}
+                        <MdBloodtype
+                            className={`cursor-pointer mx-5 duration-500 text-4xl text-red-800`}
                         />
                     </span>
                     <h1

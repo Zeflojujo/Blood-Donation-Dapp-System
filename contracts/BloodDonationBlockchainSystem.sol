@@ -23,7 +23,6 @@ contract BloodDonationBlockchainSystem {
         uint256 totalPayment;
         bool isRegistered;
         bool isLogin;
-        // uint256[] donationHistory;
     }
 
     struct Transporter {
@@ -53,19 +52,18 @@ contract BloodDonationBlockchainSystem {
         string bloodType;
         uint256 donationDate;
         TransactionStatus status;
-        string medicalCenter;
         uint256 donatedVolume;
         string bloodTestResult;
     }
 
     struct MedicalRecord {
         uint256 recordID;
+        uint256 transactionID;
         address donor;
         address medicalStaff;
         uint256 bloodPressure;
         uint256 hemoglobinLevel;
         string bloodTestResults;
-        // uint256[] donationHistory;
     }
 
     struct TransportationRecord {
@@ -136,18 +134,18 @@ contract BloodDonationBlockchainSystem {
         sysOwnerMap[owner] = sysowner;
     }
 
-    // function checkSystemOwnerLogin(address _SYSPublicAddress, string memory _password) public view returns (bool) {
-    //     // require(!medicalsCenters[_MCPublicAddress].isLogin, "You're already logged in");
-    //     require(compareString(sysOwnerMap[_SYSPublicAddress].password, _password), "Invalid address or password");
+    function checkSystemOwnerLogin(address _SYSPublicAddress, string memory _password) public view returns (bool) {
+        // require(!medicalsCenters[_MCPublicAddress].isLogin, "You're already logged in");
+        require(compareString(sysOwnerMap[_SYSPublicAddress].password, _password), "Invalid address or password");
 
-    //     return true;
-    // }
+        return true;
+    }
 
-    // function systemOwnerLogin(address _MCPublicAddress, string memory _password) public {
-    //     require(checkSystemOwnerLogin(_MCPublicAddress, _password), "Invalid login credentials");
+    function systemOwnerLogin(address _MCPublicAddress, string memory _password) public {
+        require(checkSystemOwnerLogin(_MCPublicAddress, _password), "Invalid login credentials");
 
-    //     sysOwnerMap[_MCPublicAddress].isLogin = true;
-    // }
+        sysOwnerMap[_MCPublicAddress].isLogin = true;
+    }
 
     function addDonor(
         address _donorPublicAddress,
@@ -367,7 +365,6 @@ contract BloodDonationBlockchainSystem {
             bloodType: donors[_donorPublicAddress].bloodType,
             donationDate: block.timestamp,
             status: TransactionStatus.Pending,
-            medicalCenter: "",
             donatedVolume: _volume,
             bloodTestResult: ""
         });
@@ -417,7 +414,6 @@ contract BloodDonationBlockchainSystem {
         bloodType = donationTransaction.bloodType;
         donationDate = donationTransaction.donationDate;
         status = donationTransaction.status;
-        medicalCenter = donationTransaction.medicalCenter;
         donatedVolume = donationTransaction.donatedVolume;
         bloodTestResult = donationTransaction.bloodTestResult;
     }
@@ -491,13 +487,13 @@ contract BloodDonationBlockchainSystem {
         );
 
         donationTransactions[msg.sender][_transactionID].medicalStaff = msg.sender;
-        donationTransactions[msg.sender][_transactionID].medicalCenter = _medicalCenter;
         donationTransactions[msg.sender][_transactionID].status = TransactionStatus.Completed;
         donationTransactions[msg.sender][_transactionID].bloodTestResult = _bloodTestResults;
 
         uint256 recordID = block.timestamp;
         medicalRecords[msg.sender][recordID] = MedicalRecord({
             recordID: recordID,
+            transactionID: _transactionID,
             donor: donationTransactions[msg.sender][_transactionID].donor,
             medicalStaff: msg.sender,
             bloodPressure: _bloodPressure,
@@ -536,6 +532,7 @@ contract BloodDonationBlockchainSystem {
         view
         returns (
             uint256 medicalRecordID,
+            uint256 transactionID,
             address donorAddress,
             address medicalStaff,
             uint256 bloodPressure,
@@ -547,6 +544,7 @@ contract BloodDonationBlockchainSystem {
             _medicalRecordID
         ];
         medicalRecordID = medicalRecord.recordID;
+        transactionID = medicalRecord.transactionID;
         donorAddress = medicalRecord.donor;
         medicalStaff = medicalRecord.medicalStaff;
         bloodPressure = medicalRecord.bloodPressure;
@@ -559,8 +557,8 @@ contract BloodDonationBlockchainSystem {
     function initiateTransportation(
         address _medicalCenterPublicAddress,
         uint256 _transactionID,
-        address _recipient,
-        string memory _medicalCenter
+        address _recipient
+        // string memory _medicalCenter
     ) public {
         require(
             donationTransactions[_medicalCenterPublicAddress][_transactionID].status ==
@@ -578,7 +576,6 @@ contract BloodDonationBlockchainSystem {
             bloodType: donationTransactions[_medicalCenterPublicAddress][_transactionID].bloodType,
             donationDate: donationTransactions[_medicalCenterPublicAddress][_transactionID].donationDate,
             status: donationTransactions[_medicalCenterPublicAddress][_transactionID].status,
-            medicalCenter: _medicalCenter,
             donatedVolume: donors[donationTransactions[_medicalCenterPublicAddress][_transactionID].donor]
                 .donatedVolume,
             bloodTestResult: donationTransactions[_medicalCenterPublicAddress][_transactionID].bloodTestResult
