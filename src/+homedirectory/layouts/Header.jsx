@@ -20,10 +20,10 @@ const Header = () => {
         hidden list-none flex-row justify-center gap-8 
         items-center flex-initial"
       >
-        <li className="mx-4 cursor-pointer"><Link to="/collection-point/login">Collection Point</Link></li>
-        <li className="mx-4 cursor-pointer"><Link to="/medical-center/login">Medical Center</Link></li>
-        <li className="mx-4 cursor-pointer"><Link to="/transporter/login">Transporters</Link></li>
-        <li className="mx-4 cursor-pointer"><Link to="/donor/login">Donor</Link></li>
+        <li className="mx-4 cursor-pointer"><Link className='text-white font-semibold hover:text-blue-700' to="/collection-point/login">Collection Point</Link></li>
+        <li className="mx-4 cursor-pointer"><Link className='text-white font-semibold hover:text-blue-700' to="/medical-center/login">Medical Center</Link></li>
+        <li className="mx-4 cursor-pointer"><Link className='text-white font-semibold hover:text-blue-700' to="/transporter/login">Transporters</Link></li>
+        <li className="mx-4 cursor-pointer"><Link className='text-white font-semibold hover:text-blue-700' to="/donor/login">Donor</Link></li>
       </ul>
 
       {connectedAccount ? (
