@@ -1,6 +1,9 @@
 import Web3 from "web3";
 import { setGlobalState, getGlobalState } from "./store";
 import abi from "./abis/BloodDonationBlockchainSystem.json";
+import mcabi from "./abis/MedicalCenters.json";
+import donorAbi from "./abis/DonorContract.json";
+import transAbi from "./abis/TransportContract.json";
 
 const { ethereum } = window;
 window.web3 = new Web3(ethereum);
@@ -8,7 +11,7 @@ window.web3 = new Web3(window.web3.currentProvider);
 
 const getEtheriumContract = async () => {
   const web3 = window.web3;
-  const networkId = await web3.eth.net.getId();
+  const networkId = await window.web3.eth.net.getId();
   const networkData = abi.networks[networkId];
 
   if (networkData) {
@@ -19,9 +22,48 @@ const getEtheriumContract = async () => {
   }
 };
 
+const getMedicalCenterContract = async () => {
+  const web3 = window.web3;
+  const networkId = await web3.eth.net.getId();
+  const networkData = mcabi.networks[networkId];
+
+  if (networkData) {
+    const contract = new web3.eth.Contract(mcabi.abi, networkData.address);
+    return contract;
+  } else {
+    return null;
+  }
+};
+
+const getDonorContract = async () => {
+  const web3 = window.web3;
+  const networkId = await web3.eth.net.getId();
+  const networkData = donorAbi.networks[networkId];
+
+  if (networkData) {
+    const contract = new web3.eth.Contract(donorAbi.abi, networkData.address);
+    return contract;
+  } else {
+    return null;
+  }
+};
+
+const getTransporterContract = async () => {
+  const web3 = window.web3;
+  const networkId = await web3.eth.net.getId();
+  const networkData = transAbi.networks[networkId];
+
+  if (networkData) {
+    const contract = new web3.eth.Contract(transAbi.abi, networkData.address);
+    return contract;
+  } else {
+    return null;
+  }
+};
+
 const connectWallet = async () => {
   try {
-    if (!ethereum) return window.print("Please install Metamask");
+    if (!ethereum) return console.log("Please install Metamask");
     const accounts = await ethereum.request({ method: "eth_requestAccounts" });
     setGlobalState("connectedAccount", accounts[0].toLowerCase());
   } catch (error) {
@@ -57,16 +99,17 @@ const isWallectConnected = async () => {
 const addDonor = async ({
   publicAddress,
   name,
-  bloodType,
+  age,
+  gender,
   phoneNumber,
   password,
 }) => {
   try {
-    const contract = await getEtheriumContract();
+    const contract = await getDonorContract();
     const account = getGlobalState("connectedAccount");
 
     await contract.methods
-      .addDonor(publicAddress, name, bloodType, phoneNumber, password)
+      .addDonor(publicAddress, name, age, gender, phoneNumber, password)
       .send({ from: account, gas: 1000000 });
 
     return true;
@@ -168,7 +211,7 @@ const registerTransporter = async ({
   password,
 }) => {
   try {
-    const contract = await getEtheriumContract();
+    const contract = await getTransporterContract();
     const account = getGlobalState("connectedAccount");
 
     await contract.methods
@@ -194,7 +237,7 @@ const registerMedicalStaff = async ({
   password,
 }) => {
   try {
-    const contract = await getEtheriumContract();
+    const contract = await getMedicalCenterContract();
     const account = getGlobalState("connectedAccount");
 
     await contract.methods
@@ -209,7 +252,7 @@ const registerMedicalStaff = async ({
 
 const medicalCenterLogin = async ({ publicAddress, password }) => {
   try {
-    const contract = await getEtheriumContract();
+    const contract = await getMedicalCenterContract();
     const account = getGlobalState("connectedAccount");
 
     await contract.methods
@@ -239,7 +282,7 @@ const systemOwnerLogin = async ({ publicAddress, password }) => {
 
 const donorLogin = async ({ publicAddress, password }) => {
   try {
-    const contract = await getEtheriumContract();
+    const contract = await getDonorContract();
     const account = getGlobalState("connectedAccount");
 
     await contract.methods
@@ -254,11 +297,11 @@ const donorLogin = async ({ publicAddress, password }) => {
 
 const TransporterLogin = async ({ publicAddress, password }) => {
   try {
-    const contract = await getEtheriumContract();
+    const contract = await getTransporterContract();
     const account = getGlobalState("connectedAccount");
 
     await contract.methods
-      .donorLogin(publicAddress, password)
+      .transporterLogin(publicAddress, password)
       .send({ from: account, gas: 1000000 });
 
     return true;
@@ -271,7 +314,7 @@ const displayDonors = async () => {
   try {
     if (!ethereum) return window.alert("Please install Metamask");
 
-    const contract = await getEtheriumContract();
+    const contract = await getDonorContract();
 
     const donorAddressArray = await contract.methods.getDonorsArr().call();
 
@@ -299,7 +342,7 @@ const displayTransporters = async () => {
   try {
     if (!ethereum) return window.alert("Please install Metamask");
 
-    const contract = await getEtheriumContract();
+    const contract = await getTransporterContract();
 
     const transportersAddressArray = await contract.methods
       .getTransportersArr()
@@ -335,7 +378,7 @@ const displayMedicalCenters = async () => {
   try {
     if (!ethereum) return window.alert("Please install Metamask");
 
-    const contract = await getEtheriumContract();
+    const contract = await getMedicalCenterContract();
 
     const MedicalCenterAddressArray = await contract.methods
       .getMedicalCentersArr()
@@ -358,6 +401,24 @@ const displayMedicalCenters = async () => {
     }
 
     setGlobalState("medicalCenters", medicalCenterAddressData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const displayMedicalCenter = async () => {
+  try {
+    if (!ethereum) return window.alert("Please install Metamask");
+
+    const contract = await getMedicalCenterContract();
+    const medicalCenterAddress = getGlobalState("connectedAccount");
+
+    const medicalCenterData = await contract.methods
+      .getMedicalCenter(medicalCenterAddress)
+      .call();
+    // console.log("Medical Center :", _medicalCenter);
+
+    setGlobalState("medicalCenter", medicalCenterData);
   } catch (error) {
     console.log(error);
   }
@@ -466,7 +527,7 @@ const initiateDonationTransaction = async ({
 
 const completeDonationTransactions = async ({
   transactionId,
-  medicalCenter,
+  bloodType,
   bloodPressure,
   hemoglobinLevel,
   bloodTestResults,
@@ -480,7 +541,7 @@ const completeDonationTransactions = async ({
     await contract.methods
       .completeDonationToMedicalCenter(
         Number(transactionId),
-        medicalCenter,
+        bloodType,
         Number(bloodPressure),
         Number(hemoglobinLevel),
         bloodTestResults
@@ -507,6 +568,7 @@ export {
   displayTransporters,
   displayDonationTransaction,
   displayMedicalCenters,
+  displayMedicalCenter,
   displayMedicalRecord,
   initiateDonationTransaction,
   completeDonationTransactions,

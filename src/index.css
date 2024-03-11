@@ -79,10 +79,10 @@ body {
 @tailwind utilities;
 
 @layer base {
-  a {
+  /* a {
       @apply text-blue-600 hover:text-purple-500 transition decoration-wavy underline-offset-2; 
   }
   a.active {
-      @apply margin-0 w-full p-5 bg-light-white text-gray-900 duration-300 dark:text-blue-300
-  }
+      @apply w-full p-5 bg-light-white text-gray-900 duration-300 dark:text-blue-300
+  } */
 }

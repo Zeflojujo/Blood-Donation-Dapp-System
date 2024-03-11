@@ -12,6 +12,7 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   transporters: [],
   transporterName: "",
   medicalCenters: [],
+  medicalCenter: [],
   medicalRecords: [],
   medicalCenterName: "",
   donationTransactions: [],

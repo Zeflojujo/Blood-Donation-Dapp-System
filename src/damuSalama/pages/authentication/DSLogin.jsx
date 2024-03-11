@@ -10,6 +10,7 @@ import {
 import { systemOwnerLogin } from '../../../BlockchainService'
 import Alert from '../../../+homedirectory/components/Alert';
 import Loading from '../../../+homedirectory/components/Loding';
+import { FaArrowRightToBracket } from 'react-icons/fa6';
 
   const DSLogin = () => {
     const navigate = useNavigate();
@@ -103,7 +104,7 @@ import Loading from '../../../+homedirectory/components/Loding';
   
             <button
               type="submit"
-              className="flex flex-row justify-center items-center
+              className="flex flex-row justify-center items-center gap-1
                 w-full text-white text-base md:text-lg bg-[#e32970]
                 hover:bg-[#bd255f] py-2 px-5 rounded-lg
                 drop-shadow-xl border border-transparent
@@ -111,7 +112,7 @@ import Loading from '../../../+homedirectory/components/Loding';
                 hover:border hover:border-[#bd255f]
                 focus:outline-none focus:ring mt-5"
             >
-              Login
+              Login <FaArrowRightToBracket />
             </button>
           </form>
         </div>

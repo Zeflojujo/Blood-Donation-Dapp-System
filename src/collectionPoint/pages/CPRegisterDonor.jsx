@@ -15,28 +15,15 @@ import DonorTable from "../components/DonorTable"
 // import { Link } from "react-router-dom"
 import Alert from "../../+homedirectory/components/Alert"
 import Loading from "../../+homedirectory/components/Loding"
-  
-//   const auth =
-//     'Basic ' +
-//     Buffer.from(
-//       process.env.REACT_APP_INFURIA_PID + ':' + process.env.REACT_APP_INFURIA_API,
-//     ).toString('base64')
-  
-//   const client = create({
-//     host: 'ipfs.infura.io',
-//     port: 5001,
-//     protocol: 'https',
-//     headers: {
-//       authorization: auth,
-//     },
-//   })
+
   
   const CPRegisterDonor = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false)
     const [modal] = useGlobalState('modal')
     const [publicAddress, setPublicAddress] = useState('')
     const [name, setName] = useState('')
-    const [bloodType, setBloodType] = useState('')
+    const [age, setAge] = useState('')
+    const [gender, setGender] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
 
     const toggleSidebar = () => {
@@ -50,7 +37,7 @@ import Loading from "../../+homedirectory/components/Loding"
     const handleSubmit = async (e) => {
       e.preventDefault()
   
-      if (!publicAddress || !name || !bloodType || !phoneNumber) return
+      if (!publicAddress || !name || !age || !gender || !phoneNumber) return
   
       setGlobalState('modal', 'scale-0')
       setGlobalState('loading', { show: true, msg: 'Registering donor...' })
@@ -59,7 +46,7 @@ import Loading from "../../+homedirectory/components/Loding"
   
         setLoadingMsg('Intializing transaction...')
         const password = name
-        const result = await addDonor({publicAddress, name, bloodType, phoneNumber, password})
+        const result = await addDonor({publicAddress, name, age, gender, phoneNumber, password})
         
         if(result){
             resetForm()
@@ -85,8 +72,9 @@ import Loading from "../../+homedirectory/components/Loding"
     const resetForm = () => {
       setPublicAddress('')
       setName('')
+      setAge("")
+      setGender("")
       setPhoneNumber('')
-      setBloodType('')
     }
   
     return (
@@ -181,6 +169,47 @@ import Loading from "../../+homedirectory/components/Loding"
             <div className="mt-4">
               <input
                 className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                type="number"
+                name="age"
+                placeholder="age"
+                onChange={(e) => setAge(e.target.value)}
+                value={age}
+                required
+              />
+            </div>
+
+            {/* <div className="mt-4">
+              <input
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                type="text"
+                name="gender"
+                placeholder="gender"
+                onChange={(e) => setGender(e.target.value)}
+                value={gender}
+                required
+              />
+            </div> */}
+
+            <div className="mt-4">
+                <select
+                    className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
+                    name="gender"
+                    onChange={(e) => setGender(e.target.value)}
+                    value={gender}
+                    required
+                >
+                    <option value="" disabled>Select donor gender</option>
+                    <option value="MALE">MALE</option>
+                    <option value="FEMALE">FEMALE</option>
+                </select>
+                <svg className="absolute right-0 top-0 h-full w-10 text-gray-600 pointer-events-none" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
+
+            <div className="mt-4">
+              <input
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="text"
                 name="phoneNumber"
                 placeholder="phoneNumber"
@@ -190,19 +219,6 @@ import Loading from "../../+homedirectory/components/Loding"
               />
             </div>
 
-            <div className="mt-4">
-              <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
-                type="text"
-                name="bloodType"
-                placeholder="bloodType"
-                onChange={(e) => setBloodType(e.target.value)}
-                value={bloodType}
-                required
-              />
-            </div>
-  
-  
             <button
               type="submit"
               className="flex flex-row justify-center items-center

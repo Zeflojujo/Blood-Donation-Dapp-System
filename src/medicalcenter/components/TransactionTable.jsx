@@ -17,10 +17,10 @@ const TransactionTable = () => {
   const [end, setEnd] = useState(5)
 
   // const [transactionID, setTransactionID] = useState("")
-    const [hemoglobinLevel, setHemoglobinLevel] = useState("")
-    const [medicalCenter, setMedicalCenter] = useState("")
-    const [bloodPressure, setBloodPressure] = useState("")
-    const [bloodTestResults, setBloodTestResults] = useState("")
+  const [bloodType, setBloodType] = useState("")
+  const [hemoglobinLevel, setHemoglobinLevel] = useState("")
+  const [bloodPressure, setBloodPressure] = useState("")
+  const [bloodTestResults, setBloodTestResults] = useState("")
 
 
   const handleMouseEnter = (rowIndex) => {
@@ -39,7 +39,7 @@ const TransactionTable = () => {
   const handleCompleteTransaction = async (e) => {
     e.preventDefault()
 
-    if (!transactionId || !hemoglobinLevel || !medicalCenter || !bloodPressure || !bloodTestResults) return
+    if (!transactionId || !bloodType || !hemoglobinLevel || !bloodPressure || !bloodTestResults) return
 
     setGlobalState('modal', 'scale-0')
     setGlobalState('loading', { show: true, msg: 'Blood Testing...' })
@@ -52,7 +52,7 @@ const TransactionTable = () => {
       console.log(bloodTestResults)
 
       setLoadingMsg('Intializing transaction...')
-      const result = await completeDonationTransactions({transactionId, medicalCenter, bloodPressure, hemoglobinLevel, bloodTestResults })
+      const result = await completeDonationTransactions({transactionId, bloodType, bloodPressure, hemoglobinLevel, bloodTestResults })
       console.log("result: ", result)
       if(result){
           resetForm()
@@ -72,8 +72,9 @@ const TransactionTable = () => {
   const handleConvertTransactionStatus = (enumValue) => {
       // Define your enum mappings
       const enumMappings = {
-        0: 'Pending',
-        1: 'Completed',
+        0: 'Shipped',
+        1: 'Active',
+        2: 'Fullfilled'
       };
       // Return the string representation of the enum value
       return enumMappings[enumValue];
@@ -81,7 +82,6 @@ const TransactionTable = () => {
   }
 
   const resetForm = () => {
-    setMedicalCenter("")
     setBloodPressure("")
     setHemoglobinLevel("")
     setBloodTestResults("")
@@ -147,20 +147,20 @@ const TransactionTable = () => {
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
               >
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{index+1}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.transactionID.toString()}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(donation.donorPublicAddress, 7,5,15)}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(donation.transporterPublicAddress, 7,5,15)}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(donation.recipientPublicAddress, 7,5,15)}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.bloodType.toString()}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.donatedVolume.toString()}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.donationDate.toString()}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.transactionID.toString()}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(donation.donorPublicAddress, 7,5,15)}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(donation.transporterPublicAddress, 7,5,15)}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(donation.recipientPublicAddress, 7,5,15)}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.bloodType}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{index+1}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.donatedVolume.toString()}</td>
+                <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.donationDate.toString()}</td>
                 {/* <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.medicalCenter}</td> */}
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{handleConvertTransactionStatus(donation.status.toString())}</td>
-                <td className={`py-2 px-4 text-gray-700 text-base border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.bloodTestResult}</td>
+                <td className={`py-2 px-4 text-gray-700 text-sm border-b  text-center dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><span className={`rounded-full py-1 px-2.5  ${donation.status.toString()=== "0"? 'bg-yellow-200':donation.status.toString()==="1"? 'bg-green-200': 'bg-red-400'}`}>{handleConvertTransactionStatus(donation.status.toString())}</span></td>
+                <td className={`py-2 px-4 text-gray-700 text-base border-b text-center dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.bloodTestResult}</td>
 
                 {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
-                <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Complete</button></td>
+                <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Complete</button></td>
                 {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => deleteNewsHandler(item.id)} className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
                 {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => UpdataNewsHandler(item.id)} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Update</button></td> */}
               </tr>
@@ -196,7 +196,7 @@ const TransactionTable = () => {
   
             <div className="mt-4">
               <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                className="hidden mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="text"
                 name="transactionID"
                 // onChange={(e) => setTransactionID(e.target.value)}
@@ -207,18 +207,35 @@ const TransactionTable = () => {
             </div>
 
             <div className="mt-4">
-            <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
-                type="text"
-                name="medicalCenter"
-                placeholder="medicalCenter"
-                onChange={(e) => setMedicalCenter(e.target.value)}
-                value={medicalCenter}
-                required
-              />
+                <label htmlFor="bloodType" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+                    Blood Type:
+                </label>
+                <select
+                    className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
+                    name="bloodType"
+                    onChange={(e) => setBloodType(e.target.value)}
+                    value={bloodType}
+                    required
+                >
+                    <option value="" disabled>Select donor blood type</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                </select>
+                <svg className="absolute right-0 top-0 h-full w-10 text-gray-600 pointer-events-none" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
             </div>
   
             <div className="mt-4">
+                <label htmlFor="bloodPressure" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+                  Blood Pressure
+                </label>
               <input
                 className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="number"
@@ -231,6 +248,9 @@ const TransactionTable = () => {
             </div>
 
             <div className="mt-4">
+                <label htmlFor="hemoglobinLevel" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+                  HemoglobinLevel
+                </label>
               <input
                 className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="number"
@@ -242,7 +262,7 @@ const TransactionTable = () => {
               />
             </div>
 
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <input
                 className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
                 type="text"
@@ -252,6 +272,26 @@ const TransactionTable = () => {
                 value={bloodTestResults}
                 required
               />
+            </div> */}
+
+            <div className="mt-4">
+                <label htmlFor="bloodTestResults" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+                  Blood Test Results:
+                </label>
+                <select
+                    className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
+                    name="bloodTestResults"
+                    onChange={(e) => setBloodTestResults(e.target.value)}
+                    value={bloodTestResults}
+                    required
+                >
+                    <option value="" disabled>Select Blood Test Result</option>
+                    <option value="ACCEPTED">ACCEPTED</option>
+                    <option value="REJECTED">REJECTED</option>
+                </select>
+                <svg className="absolute right-0 top-0 h-full w-10 text-gray-600 pointer-events-none" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
             </div>
             
             <button

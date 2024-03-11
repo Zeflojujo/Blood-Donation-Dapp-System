@@ -10,6 +10,7 @@ import Alert from '../../../+homedirectory/components/Alert';
 import Loading from '../../../+homedirectory/components/Loding';
 import Donate from "../../../assets/donate.jpg"
 import { donorLogin } from '../../../BlockchainService';
+import { FaArrowRightToBracket } from 'react-icons/fa6';
 
   const DonorLogin = () => {
     const navigate = useNavigate();
@@ -102,7 +103,7 @@ import { donorLogin } from '../../../BlockchainService';
   
             <button
               type="submit"
-              className="flex flex-row justify-center items-center
+              className="flex flex-row justify-center items-center gap-1
                 w-full text-white text-base md:text-lg bg-[#e32970]
                 hover:bg-[#bd255f] py-2 px-5 rounded-lg
                 drop-shadow-xl border border-transparent
@@ -110,7 +111,7 @@ import { donorLogin } from '../../../BlockchainService';
                 hover:border hover:border-[#bd255f]
                 focus:outline-none focus:ring mt-5"
             >
-              Login
+              Login <FaArrowRightToBracket />
             </button>
           </form>
         </div>

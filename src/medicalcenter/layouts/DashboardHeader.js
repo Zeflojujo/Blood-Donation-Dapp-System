@@ -14,6 +14,7 @@ import { RxCross2 } from "react-icons/rx";
 
 const DashboardHeader = ({ isOpen, toggleSidebar, isAuth }) => {
   const [connectedAccount] = useGlobalState("connectedAccount");
+  const [medicalCenter] = useGlobalState("medicalCenter");
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const [theme, setTheme] = useState(localStorage.theme);
@@ -80,7 +81,7 @@ const DashboardHeader = ({ isOpen, toggleSidebar, isAuth }) => {
             </button>
           )}
 
-          <span className="hidden text-lg md:block">Username</span>
+          <span className="hidden text-lg md:block">{medicalCenter.name}</span>
           <IoIosArrowDown
             className={`flex items-center text-2xl text-gray-500`}
             onClick={toggleDropdown}

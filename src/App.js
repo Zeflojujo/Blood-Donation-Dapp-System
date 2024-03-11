@@ -6,6 +6,7 @@ import Home from "./+homedirectory/pages/Home";
 import {
   displayDonationTransaction,
   displayDonors,
+  displayMedicalCenter,
   displayMedicalCenters,
   displayMedicalRecord,
   displayTransporters,
@@ -41,6 +42,7 @@ function App() {
       await displayDonors();
       await displayTransporters();
       await displayMedicalCenters();
+      await displayMedicalCenter();
       await displayDonationTransaction();
       await displayMedicalRecord();
     };

@@ -1,8 +1,10 @@
 import React, { useState } from "react"
 import Sidebar from "../layouts/Sidebar"
 import DashboardHeader from "../layouts/DashboardHeader"
+import { useGlobalState } from "../../store";
 
 const MCDashboard = () => {
+    const [medicalCenter] = useGlobalState("medicalCenter");
     const [isSidebarOpen, setSidebarOpen] = useState(false)
     const [userInfo, setUserInfo] = useState({
         publicAddress: '0x22d491Bde2303f2f43325b2108D26f1eAbA1e32b',
@@ -11,6 +13,8 @@ const MCDashboard = () => {
         bloodType: 'O+',
         // Add more user-related data as needed
       });
+
+      console.log("medical center session data", medicalCenter)
 
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen)
@@ -44,19 +48,15 @@ const MCDashboard = () => {
                             <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-gray-600 text-xl">Public Address:</p>
-                                <p className="font-bold text-lg">{userInfo.publicAddress}</p>
+                                <p className="font-bold text-lg">{medicalCenter.MCPublicAddress}</p>
                             </div>
                             <div>
                                 <p className="text-gray-600 text-xl">Name:</p>
-                                <p className="font-bold text-lg">{userInfo.Name}</p>
+                                <p className="font-bold text-lg">{medicalCenter.name}</p>
                             </div>
                             <div>
                                 <p className="text-gray-600 text-xl">Phone Number:</p>
-                                <p className="font-bold text-lg">{userInfo.phoneNumber}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-600 text-xl">BloodType:</p>
-                                <p className="font-bold text-lg">{userInfo.bloodType}</p>
+                                <p className="font-bold text-lg">{medicalCenter.phoneNumber}</p>
                             </div>
                             </div>
                         </div>

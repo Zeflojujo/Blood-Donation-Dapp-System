@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
+import "./AccessControl.sol";
 
-contract MedicalCenters {
+contract MedicalCenters is AccessControl {
+
     struct MedicalCenter {
         address MCPublicAddress;
         string name;
@@ -15,17 +17,16 @@ contract MedicalCenters {
 
     address[] public medicaCenterAddressArr;
 
-    // modifier onlyOwner() {
-    //     require(msg.sender == owner, "Restricted to system owner only");
-    //     _;
-    // }
+    function readMedicalCenter(address _medicalCenterAddress) public view returns(MedicalCenter memory){
+        return medicalsCenters[_medicalCenterAddress];
+    }
 
     function addMedicalCenter(
         address _MCPublicAddress,
         string memory _name,
         string memory _contactNumber,
         string memory _password
-    ) public {
+    ) public onlyOwner {
         require(
             medicalsCenters[_MCPublicAddress].isRegistered == false,
             "Medical center is already registered"
@@ -42,26 +43,22 @@ contract MedicalCenters {
         
     }
 
-    // function  medicalCenterLogin(address _MCPublicAddress, string memory _password) public {
-    //     require(medicalsCenters[_MCPublicAddress].isRegistered == true, "Your not registered yet!");
-    //     require(medicalsCenters[_MCPublicAddress].isLogin == false, "Your Already login");
-    //     require(compareString(medicalsCenters[_MCPublicAddress].password, _password), "Invalid address or password");
+    function medicalCenterChangePassword(string memory _oldPassword, string memory _newPassword) external {
+        require(medicalsCenters[msg.sender].isLogin == true, "Not logged in");
+        require(compareString(medicalsCenters[msg.sender].password, _oldPassword), "Invalid old password");
+        require(keccak256(abi.encode(_newPassword)).length > 0, "Password should not be empty");
+        require(compareString(medicalsCenters[msg.sender].password, _newPassword), "Invalid new password");
 
-    //     MedicalCenter memory medicalCenter = medicalsCenters[_MCPublicAddress];
-    //     medicalCenter.isLogin = true;
-    // }
-
-    function checkMedicalCenterLogin(address _MCPublicAddress, string memory _password) public view returns (bool) {
-        require(medicalsCenters[_MCPublicAddress].isRegistered == true, "You're not registered yet!");
-        // require(!medicalsCenters[_MCPublicAddress].isLogin, "You're already logged in");
-        require(compareString(medicalsCenters[_MCPublicAddress].password, _password), "Invalid address or password");
-
-        return true;
+        medicalsCenters[msg.sender].password = _newPassword;
     }
 
-    function medicalCenterLogin(address _MCPublicAddress, string memory _password) public {
-        require(checkMedicalCenterLogin(_MCPublicAddress, _password), "Invalid login credentials");
+    function  medicalCenterLogin(address _MCPublicAddress, string memory _password) public {
+        require(medicalsCenters[_MCPublicAddress].isRegistered == true, "Your not registered yet!");
+        // require(medicalsCenters[_MCPublicAddress].isLogin == false, "Your Already login");
+        require(compareString(medicalsCenters[_MCPublicAddress].password, _password), "Invalid address or password");
 
+        // MedicalCenter memory medicalCenter = medicalsCenters[_MCPublicAddress];
+        // medicalCenter.isLogin = true;
         medicalsCenters[_MCPublicAddress].isLogin = true;
     }
 
@@ -92,7 +89,4 @@ contract MedicalCenters {
         phoneNumber = medicalCenter.phoneNumber;
     }
 
-    function compareString(string memory _a, string memory _b) internal pure returns(bool) {
-        return keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b));
-    }
 }

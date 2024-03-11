@@ -119,7 +119,7 @@ import Loading from "../../+homedirectory/components/Loding"
 
                                 <div className="mt-4">
                                     <label htmlFor="MCPublicAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
-                                        Medical Center Public Address:
+                                        Medical Center Name:
                                     </label>
                                     <select
                                         className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"

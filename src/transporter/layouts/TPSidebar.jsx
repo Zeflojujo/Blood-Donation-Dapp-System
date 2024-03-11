@@ -14,9 +14,9 @@ const TPSidebar = ({ isOpen, toggleSidebar }) => {
 
     const Menus = [
         { title: "Dashboard", link: "/transporter/dashboard", icon: <MdDashboard /> },
-        { title: "Register Donor", link: "/transporter/complete-transportation", icon: <BsDatabaseFillAdd /> },
+        { title: "Initiate Transportation", link: "/transporter/initiate-transportation", icon: <BsDatabaseFillAdd /> },
         // { title: "View Donors", link: "/transporter/view-donor", icon: <FaUser /> },
-        { title: "Donation Transaction", link: "/transporter/initiate-transportation", icon: <FaKeycdn /> },
+        { title: "Complete Transportation", link: "/transporter/complete-transportation", icon: <FaKeycdn /> },
     ]
 
     return (

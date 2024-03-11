@@ -5,6 +5,7 @@ import ambulance from "../../assets/ambulance.jpg"
 import medicalStaff from "../../assets/laboratory.jpg"
 import medicalCenter from "../../assets/medical-center.jpg"
 import { Link } from 'react-router-dom'
+import { FaAngleDoubleRight } from 'react-icons/fa'
 
 const Categories = () => {
   const [donors] = useGlobalState('donors')
@@ -36,14 +37,14 @@ const Categories = () => {
               className="h-60 w-full object-cover shadow-lg shadow-black rounded-lg mb-3"
             />
             <h4 className="text-white font-semibold">Collection Point</h4>
-            <p className="text-gray-400 text-xs my-1">The Place where the blood is collected from the donor then send to the medical center</p>
+            <p className="text-gray-400 text-xs my-1">Collect blood units from Donors and ship it to the Authorized Medical Center</p>
             <div className="flex justify-center items-center mt-3 text-white">
               <Link
               to="/collection-point/login"
-                className="shadow-lg shadow-black text-white text-sm bg-[#e32970]
+                className="flex justify-center items-center gap-2 shadow-lg shadow-black text-white text-sm bg-[#e32970]
                   hover:bg-[#bd255f] cursor-pointer rounded-full px-4 py-1"
               >
-                Sign In
+                Sign In <FaAngleDoubleRight />
               </Link>
             </div>
           </div>
@@ -55,14 +56,14 @@ const Categories = () => {
               className="h-60 w-full object-cover shadow-lg shadow-black rounded-lg mb-3"
             />
             <h4 className="text-white font-semibold">Blood Donation</h4>
-            <p className="text-gray-400 text-xs my-1">Donor when donate blood at the medical center</p>
+            <p className="text-gray-400 text-xs my-1">Donor who donate blood at the collection point</p>
             <div className="flex justify-center items-center mt-3 text-white">
               <Link
                 to="/donor/login"
-                className="shadow-lg shadow-black text-white text-sm bg-[#e32970]
+                className="flex justify-center items-center gap-2 shadow-lg shadow-black text-white text-sm bg-[#e32970]
                   hover:bg-[#bd255f] cursor-pointer rounded-full px-4 py-1"
               >
-                Sign In
+                Sign In <FaAngleDoubleRight />
               </Link>
             </div>
           </div>
@@ -74,16 +75,16 @@ const Categories = () => {
               className="h-60 w-full object-cover shadow-lg shadow-black rounded-lg mb-3"
             />
             <h4 className="text-white font-semibold">Transportation</h4>
-            <p className="text-gray-400 text-xs my-1">Transfer Blood from one medical Stuff to another</p>
+            <p className="text-gray-400 text-xs my-1">Shipping active blood from one medical center to another</p>
             <div className="flex justify-center items-center mt-3 text-white">
 
               <Link
               to="/transporter/login"
-                className="shadow-lg shadow-black text-white text-sm bg-[#e32970]
+                className="flex justify-center items-center gap-2 shadow-lg shadow-black text-white text-sm bg-[#e32970]
                   hover:bg-[#bd255f] cursor-pointer rounded-full px-4 py-1"
               //   onClick={setNFT}
               >
-                Sign In
+                Sign In <FaAngleDoubleRight />
               </Link>
             </div>
           </div>
@@ -95,14 +96,14 @@ const Categories = () => {
               className="h-60 w-full object-cover shadow-lg shadow-black rounded-lg mb-3"
             />
             <h4 className="text-white font-semibold">Medical Center</h4>
-            <p className="text-gray-400 text-xs my-1">Transfer Blood from one medical Stuff to another</p>
+            <p className="text-gray-400 text-xs my-1">Collect Blood Samples from the Authorized collection point and use it in need for patients</p>
             <div className="flex justify-center items-center mt-3 text-white">
               <Link
               to="/medical-center/login"
-                className="shadow-lg shadow-black text-white text-sm bg-[#e32970]
+                className="flex justify-center items-center gap-2 shadow-lg shadow-black text-white text-sm bg-[#e32970]
                   hover:bg-[#bd255f] cursor-pointer rounded-full px-4 py-1"
               >
-                Sign In
+                Sign In <FaAngleDoubleRight />
               </Link>
             </div>
           </div>
