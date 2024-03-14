@@ -24,7 +24,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         },
         // { title: "Blood Checking", link: "/medical-center/donate-blood-to-medicalcenter", icon: <FaKeycdn /> },
         { title: "Medical Records", link: "/medical-center/medical-records", icon: <FaChartPie /> },
-        // { title: "Blood Supplied", link: "/medical-center/blood-supplied", icon: <FaChartPie /> },
+        { title: "Blood Supplied", link: "/medical-center/blood-supplied", icon: <FaChartPie /> },
     ]
 
     return (

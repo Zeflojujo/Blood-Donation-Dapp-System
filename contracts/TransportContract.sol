@@ -22,7 +22,7 @@ contract TransportContract is AccessControl {
         string memory _name,
         string memory _contactNumber,
         string memory _password
-    ) public onlyOwner {
+    ) public onlyOwner noReentrancy {
         require(
             transporters[_transporterPublicAddress].isRegistered == false,
             "Transporter already registered"

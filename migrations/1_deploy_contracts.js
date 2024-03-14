@@ -4,8 +4,8 @@
 const BloodDonationBlockchainSystem = artifacts.require(
   "BloodDonationBlockchainSystem"
 );
-const AccessControl = artifacts.require("AccessControl");
 const DonorContract = artifacts.require("DonorContract");
+const CollectionPointContract = artifacts.require("CollectionPointContract");
 const TransportContract = artifacts.require("TransportContract");
 const MedicalCenter = artifacts.require("MedicalCenters");
 
@@ -13,7 +13,10 @@ module.exports = function (deployer) {
   deployer
     .deploy(MedicalCenter)
     .then(function () {
-      return deployer.deploy(DonorContract);
+      return deployer.deploy(CollectionPointContract);
+    })
+    .then(function () {
+      return deployer.deploy(DonorContract, CollectionPointContract.address);
     })
     .then(function () {
       return deployer.deploy(TransportContract);
@@ -23,7 +26,8 @@ module.exports = function (deployer) {
         BloodDonationBlockchainSystem,
         DonorContract.address,
         MedicalCenter.address,
-        TransportContract.address
+        TransportContract.address,
+        CollectionPointContract.address
       );
     });
 };

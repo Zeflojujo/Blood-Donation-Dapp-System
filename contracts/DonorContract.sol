@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
+import "./AccessControl.sol";
+import"./CollectionPointContract.sol";
 
-contract DonorContract {
+contract DonorContract is AccessControl{
+
+    event deletedDonor(address indexed donorAddress);
 
     struct Donor {
         address donorPublicAddress;
@@ -15,12 +19,19 @@ contract DonorContract {
         uint256 totalPayment;
         bool isRegistered;
         bool isLogin;
+        bool isDeleted;
         uint256[] donorTransactionHistory;
     }
 
-    mapping(address => Donor) public donors;
+    mapping(address => Donor) private donors;
 
     address[] private donorAddressArr;
+
+    CollectionPointContract public collectionPoint;
+
+    constructor(address collectionPointAddress_) {
+        collectionPoint = CollectionPointContract(collectionPointAddress_);
+    }
 
     function updateVolume(address _donodAddress, uint256 _newVolume) external {
         Donor storage donor = donors[_donodAddress];
@@ -50,9 +61,9 @@ contract DonorContract {
         string memory _gender,
         string memory _contactNumber,
         string memory _password
-    ) external {
+    ) external noReentrancy {
         require(
-            donors[_donorPublicAddress].isRegistered == false,
+            donors[_donorPublicAddress].isRegistered == false || donors[_donorPublicAddress].isDeleted,
             "Donor is already registered"
         );
         donors[_donorPublicAddress] = Donor({
@@ -67,6 +78,7 @@ contract DonorContract {
             totalPayment: 0,
             isRegistered: true,
             isLogin: false,
+            isDeleted: false,
             donorTransactionHistory: new uint256[](0)
     });
 
@@ -115,7 +127,10 @@ contract DonorContract {
             string memory phoneNumber,
             uint256 donatedVolume,
             uint256 totalPayment,
-            bool isRegistered
+            bool isRegistered,
+            bool isLogin,
+            bool isDeleted,
+            uint256[] memory donorTransactionHistory
         )
     {
         Donor memory donor = donors[_donorPublicAddress];
@@ -128,10 +143,21 @@ contract DonorContract {
         donatedVolume = donor.donatedVolume;
         totalPayment = donor.totalPayment;
         isRegistered = donor.isRegistered;
+        isLogin = donor.isLogin;
+        isDeleted = donor.isDeleted;
+        donorTransactionHistory = donor.donorTransactionHistory;
     }
 
-    /// @dev this is helper function
-    function compareString(string memory _a, string memory _b) internal pure returns(bool) {
-        return keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b));
+    function deleteDonor(address donorAddress_) external {
+        require(!donors[donorAddress_].isDeleted, "This data does not exist");
+        Donor storage donor = donors[donorAddress_];
+        donor.isDeleted = true;
+        donors[donorAddress_] = donor;
+        emit deletedDonor(donorAddress_);
     }
+
+    // /// @dev this is helper function
+    // function compareString(string memory _a, string memory _b) internal pure returns(bool) {
+    //     return keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b));
+    // }
 }

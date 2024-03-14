@@ -1,9 +1,10 @@
 import Web3 from "web3";
 import { setGlobalState, getGlobalState } from "./store";
 import abi from "./abis/BloodDonationBlockchainSystem.json";
-import mcabi from "./abis/MedicalCenters.json";
+import mcAbi from "./abis/MedicalCenters.json";
 import donorAbi from "./abis/DonorContract.json";
 import transAbi from "./abis/TransportContract.json";
+import cpAbi from "./abis/CollectionPointContract.json";
 
 const { ethereum } = window;
 window.web3 = new Web3(ethereum);
@@ -25,10 +26,23 @@ const getEtheriumContract = async () => {
 const getMedicalCenterContract = async () => {
   const web3 = window.web3;
   const networkId = await web3.eth.net.getId();
-  const networkData = mcabi.networks[networkId];
+  const networkData = mcAbi.networks[networkId];
 
   if (networkData) {
-    const contract = new web3.eth.Contract(mcabi.abi, networkData.address);
+    const contract = new web3.eth.Contract(mcAbi.abi, networkData.address);
+    return contract;
+  } else {
+    return null;
+  }
+};
+
+const getCollectionPointContract = async () => {
+  const web3 = window.web3;
+  const networkId = await web3.eth.net.getId();
+  const networkData = cpAbi.networks[networkId];
+
+  if (networkData) {
+    const contract = new web3.eth.Contract(cpAbi.abi, networkData.address);
     return contract;
   } else {
     return null;
@@ -128,6 +142,21 @@ const addDonor = async ({
     } else {
       setGlobalState("smartcontractError", "Donor Registration Failed");
     }
+  }
+};
+
+const deleteDonor = async ({ publicAddress }) => {
+  try {
+    const contract = await getDonorContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .deleteDonor(publicAddress)
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error.message);
   }
 };
 
@@ -250,6 +279,26 @@ const registerMedicalStaff = async ({
   }
 };
 
+const registerCollectionPoint = async ({
+  publicAddress,
+  name,
+  phoneNumber,
+  password,
+}) => {
+  try {
+    const contract = await getCollectionPointContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .addCollectionPoint(publicAddress, name, phoneNumber, password)
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const medicalCenterLogin = async ({ publicAddress, password }) => {
   try {
     const contract = await getMedicalCenterContract();
@@ -257,6 +306,21 @@ const medicalCenterLogin = async ({ publicAddress, password }) => {
 
     await contract.methods
       .medicalCenterLogin(publicAddress, password)
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const colletionPointLogin = async ({ publicAddress, password }) => {
+  try {
+    const contract = await getCollectionPointContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .collectionPointLogin(publicAddress, password)
       .send({ from: account, gas: 1000000 });
 
     return true;
@@ -328,11 +392,55 @@ const displayDonors = async () => {
       const donorAddress = donorAddressArray[i];
       // console.log(`the registration number is: ${voterRegNumber}`);
       const _donor = await contract.methods.getDonor(donorAddress).call();
-      donorAddressData.push(_donor);
+      if (!_donor.isDeleted) {
+        donorAddressData.push(_donor);
+      }
       console.log("Donor :", _donor);
     }
 
     setGlobalState("donors", donorAddressData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const displayDonorDonationHistory = async () => {
+  try {
+    if (!ethereum) return window.alert("Please install Metamask");
+
+    const donorContract = await getDonorContract();
+    const transactionContract = await getEtheriumContract();
+    const donorAddress = getGlobalState("connectedAccount");
+
+    const _donor = await donorContract.methods.getDonor(donorAddress).call();
+
+    console.log("donor data: ", _donor);
+    console.log(
+      "donor transactionIdHistoryArray: ",
+      _donor.donorTransactionHistory
+    );
+
+    const donorTransactionArray = _donor.donorTransactionHistory;
+
+    const donorTransactionData = [];
+
+    for (let i = 0; i < donorTransactionArray.length; i++) {
+      const transactionId = donorTransactionArray[i];
+      // console.log(`the registration number is: ${voterRegNumber}`);
+      const _donationTransaction = await transactionContract.methods
+        .getAllDonationTransaction(transactionId)
+        .call();
+      console.log(
+        "donation of blood for specific medical center: ",
+        _donationTransaction.transactionID
+      );
+      // if (_donationTransaction.transactionID !== 0n) {
+      donorTransactionData.push(_donationTransaction);
+      // }
+      // console.log("Donation Transaction :", _donationTransaction);
+    }
+
+    setGlobalState("donorTransactionHistory", donorTransactionData);
   } catch (error) {
     console.log(error);
   }
@@ -424,6 +532,38 @@ const displayMedicalCenter = async () => {
   }
 };
 
+const displayCollectionPoints = async () => {
+  try {
+    if (!ethereum) return window.alert("Please install Metamask");
+
+    const contract = await getCollectionPointContract();
+
+    const collectionPointAddressArray = await contract.methods
+      .getCollectionPointsArr()
+      .call();
+
+    const collectionPointAddressData = [];
+
+    if (collectionPointAddressArray.length === 0) {
+      console.log("NO DATA");
+    }
+
+    for (let i = 0; i < collectionPointAddressArray.length; i++) {
+      const collectionPointAddress = collectionPointAddressArray[i];
+
+      const _collectionPoint = await contract.methods
+        .getCollectionPoint(collectionPointAddress)
+        .call();
+      collectionPointAddressData.push(_collectionPoint);
+      // console.log("Collection Point :", _collectionPoint);
+    }
+
+    setGlobalState("collectionPoints", collectionPointAddressData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const displayDonationTransaction = async () => {
   try {
     if (!ethereum) return window.alert("Please install Metamask");
@@ -458,6 +598,50 @@ const displayDonationTransaction = async () => {
     }
 
     setGlobalState("donationTransactions", donationTransactionData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const displayBloodSupplied = async () => {
+  try {
+    if (!ethereum) return window.alert("Please install Metamask");
+
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    const transactionIdArray = await contract.methods
+      .getDonationTransactionArr()
+      .call();
+
+    console.log("list of transactionID", transactionIdArray);
+
+    const donationTransactionData = [];
+
+    if (transactionIdArray.length === 0) {
+      console.log("NO DATA");
+    }
+
+    for (let i = 0; i < transactionIdArray.length; i++) {
+      const transactionId = transactionIdArray[i];
+      // console.log(`the registration number is: ${voterRegNumber}`);
+      const _donationTransaction = await contract.methods
+        .getAllDonationTransaction(transactionId)
+        .call();
+      console.log(
+        "donation of blood for specific medical center: ",
+        _donationTransaction
+      );
+      if (
+        _donationTransaction.bloodTestResult === "ACCEPTED" &&
+        _donationTransaction.status === 1n
+      ) {
+        donationTransactionData.push(_donationTransaction);
+      }
+      // console.log("Donation Transaction :", _donationTransaction);
+    }
+
+    setGlobalState("bloodSupplied", donationTransactionData);
   } catch (error) {
     console.log(error);
   }
@@ -562,14 +746,20 @@ export {
   registerMedicalStaff,
   systemOwnerLogin,
   medicalCenterLogin,
+  colletionPointLogin,
   donorLogin,
   TransporterLogin,
   displayDonors,
+  displayDonorDonationHistory,
   displayTransporters,
   displayDonationTransaction,
   displayMedicalCenters,
   displayMedicalCenter,
   displayMedicalRecord,
+  displayCollectionPoints,
+  displayBloodSupplied,
   initiateDonationTransaction,
   completeDonationTransactions,
+  deleteDonor,
+  registerCollectionPoint,
 };

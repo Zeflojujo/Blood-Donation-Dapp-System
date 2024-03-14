@@ -26,7 +26,7 @@ contract MedicalCenters is AccessControl {
         string memory _name,
         string memory _contactNumber,
         string memory _password
-    ) public onlyOwner {
+    ) public onlyOwner noReentrancy {
         require(
             medicalsCenters[_MCPublicAddress].isRegistered == false,
             "Medical center is already registered"

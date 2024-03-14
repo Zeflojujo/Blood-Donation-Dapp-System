@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 // import swal from 'sweetalert';
 import { useGlobalState } from '../../store'
+import swal from 'sweetalert';
+import { deleteDonor } from '../../BlockchainService';
 
 
 const DonorTable = () => {
@@ -26,6 +28,38 @@ const DonorTable = () => {
     setAllDonors(getDonors())
     console.log(donors)
   }, [donors, end])
+
+  const deleteDonorHandler = async(publicAddress) => {
+    console.log("donor deleted public address is: ", publicAddress)
+
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this imaginary file!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+    .then(async (willDelete) => {
+      if (willDelete) {
+        swal("Poof! Your imaginary file has been deleted!", {
+          icon: "success",
+        });
+        const result = await deleteDonor({publicAddress})
+        
+        if(result){
+            window.location.reload()
+        }else {
+            throw Error
+        }
+        console.log("donor deleted public address is: ", publicAddress)
+      } else {
+        swal("Your imaginary file is safe!", {
+          icon: 'info'
+        });
+      }
+    });
+
+   }
 
   return (
     <>
@@ -82,7 +116,7 @@ const DonorTable = () => {
                 <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.bloodType}</td>
                 <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.donatedVolume.toString()}</td>
 
-                <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td>
+                <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => deleteDonorHandler(donor.publicAddress)} className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td>
                 {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => deleteNewsHandler(item.id)} className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
                 {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => UpdataNewsHandler(item.id)} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Update</button></td> */}
               </tr>

@@ -7,7 +7,7 @@ import {
   } from '../../../store'
 import { useState } from 'react'
 import Laboratory from "../../../assets/laboratory.jpg"
-import { systemOwnerLogin } from '../../../BlockchainService'
+import { colletionPointLogin } from '../../../BlockchainService'
 import Alert from '../../../+homedirectory/components/Alert';
 import Loading from '../../../+homedirectory/components/Loding';
 import { FaArrowRightToBracket } from 'react-icons/fa6';
@@ -25,8 +25,8 @@ const CPLogin = () => {
     try {
         const LoginCredentials = { publicAddress, password }
     
-        setLoadingMsg('Intializing transaction...')
-        const result = await systemOwnerLogin(LoginCredentials)
+        setLoadingMsg('Initializing transaction...')
+        const result = await colletionPointLogin(LoginCredentials)
         console.log(result)
         
         if(result){

@@ -6,15 +6,8 @@ import { useGlobalState } from "../../store";
 const MCDashboard = () => {
     const [medicalCenter] = useGlobalState("medicalCenter");
     const [isSidebarOpen, setSidebarOpen] = useState(false)
-    const [userInfo, setUserInfo] = useState({
-        publicAddress: '0x22d491Bde2303f2f43325b2108D26f1eAbA1e32b',
-        Name: 'James Adam',
-        phoneNumber: '0629066657',
-        bloodType: 'O+',
-        // Add more user-related data as needed
-      });
 
-      console.log("medical center session data", medicalCenter)
+    console.log("medical center session data", medicalCenter)
 
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen)

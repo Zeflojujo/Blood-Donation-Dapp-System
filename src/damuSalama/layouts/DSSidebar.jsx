@@ -19,6 +19,7 @@ const DSSidebar = ({ isOpen, toggleSidebar }) => {
 
     const Menus = [
         { title: "Dashboard", link: "/damu-salama/dashboard", icon: <MdDashboard /> },
+        { title: "Collection Point", link: "/damu-salama/collection-point", icon: <MdAddHomeWork /> },
         { title: "Medical Center", link: "/damu-salama/medical-center", icon: <MdAddHomeWork /> },
         {
             title: "Transporter",
@@ -27,7 +28,6 @@ const DSSidebar = ({ isOpen, toggleSidebar }) => {
         },
         // { title: "Blood Checking", link: "/medical-center/donate-blood-to-medicalcenter", icon: <FaKeycdn /> },
         // { title: "Medical Records", link: "/medical-center/blood-supplied", icon: <FaChartPie /> },
-        { title: "Blood Supplied", link: "/medical-center/blood-supplied", icon: <FaChartPie /> },
     ]
 
     return (

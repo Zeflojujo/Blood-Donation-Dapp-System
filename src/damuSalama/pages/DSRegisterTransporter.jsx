@@ -41,7 +41,7 @@ const DSRegisterTransporter = () => {
         try {
 
         setLoadingMsg('Intializing transaction...')
-        const password = name
+        const password = "12345678"
         const result = await registerTransporter({publicAddress, name, phoneNumber, password})
         
         if(result){

@@ -4,7 +4,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./+homedirectory/pages/Home";
 
 import {
+  displayBloodSupplied,
+  displayCollectionPoints,
   displayDonationTransaction,
+  displayDonorDonationHistory,
   displayDonors,
   displayMedicalCenter,
   displayMedicalCenters,
@@ -34,6 +37,7 @@ import DSDashboard from "./damuSalama/pages/DSDashboard";
 import DonationTransactionRecord from "./Donor/pages/DonationTransactionRecord";
 import TransDashboard from "./transporter/pages/TransDashboard";
 import InitiateTransportation from "./transporter/pages/InitiateTransportation";
+import DSRegisterCollectionPoint from "./damuSalama/pages/DSRegisterCollectionPoint";
 
 function App() {
   useEffect(() => {
@@ -45,6 +49,9 @@ function App() {
       await displayMedicalCenter();
       await displayDonationTransaction();
       await displayMedicalRecord();
+      await displayDonorDonationHistory();
+      await displayCollectionPoints();
+      await displayBloodSupplied();
     };
     isConnected();
   }, []);
@@ -59,6 +66,10 @@ function App() {
         <Route
           path="/damu-salama/medical-center"
           element={<DSRegisterMedicalCenter />}
+        />
+        <Route
+          path="/damu-salama/collection-point"
+          element={<DSRegisterCollectionPoint />}
         />
         <Route
           path="/damu-salama/transporter"

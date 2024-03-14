@@ -45,7 +45,7 @@ import Loading from "../../+homedirectory/components/Loding"
       try {
   
         setLoadingMsg('Intializing transaction...')
-        const password = name
+        const password = "12345678"
         const result = await addDonor({publicAddress, name, age, gender, phoneNumber, password})
         
         if(result){

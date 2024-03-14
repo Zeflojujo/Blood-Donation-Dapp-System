@@ -8,14 +8,13 @@ import {
   } from '../../store'
 import { useState } from 'react'
 import { FaTimes } from 'react-icons/fa'
-import { registerMedicalStaff } from '../../BlockchainService'
-import medicalCenter from "../../assets/medical-center.jpg"
+import { registerCollectionPoint } from '../../BlockchainService'
+import medicalCenter from "../../assets/donate.jpg"
 import Alert from "../../+homedirectory/components/Alert"
 import Loading from "../../+homedirectory/components/Loding"
-import MedicalCenterTable from "../components/MedicalCenterTable"
+import CollectionPointTable from "../components/CollectionPointTable"
   
-  
-const DSRegisterMedicalCenter = () => {
+const DSRegisterCollectionPoint = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false)
     const [modal] = useGlobalState('modal')
     const [publicAddress, setPublicAddress] = useState('')
@@ -26,7 +25,7 @@ const DSRegisterMedicalCenter = () => {
         setSidebarOpen(!isSidebarOpen)
     }
 
-    const handleRegisterMedicalStaffModel = () => {
+    const handleCollectionPointModel = () => {
         setGlobalState('modal', 'scale-100')
     }
 
@@ -42,12 +41,12 @@ const DSRegisterMedicalCenter = () => {
 
         setLoadingMsg('Intializing transaction...')
         const password = "12345678"
-        const result = await registerMedicalStaff({publicAddress, name, phoneNumber, password})
+        const result = await registerCollectionPoint({publicAddress, name, phoneNumber, password})
         console.log(result)
         
         if(result){
             resetForm()
-            setAlert('MedicalCenter registration completed...', 'green')
+            setAlert('Collection point registration completed...', 'green')
             window.location.reload()
 
         }else {
@@ -91,12 +90,12 @@ const DSRegisterMedicalCenter = () => {
                     {/* MedicalCenterTable component is included */}
                     <div className="w-4/5">
                         <button
-                            onClick={handleRegisterMedicalStaffModel}
+                            onClick={handleCollectionPointModel}
                             className="bg-blue-500 mb-3 text-lg float-end text-white dark:bg-transparent hover:text-white dark:shadow-md dark:shadow-light-white dark:border dark:border-blue-500 dark:text-gray-500 hover:bg-blue-700  font-bold py-2 px-4 rounded-lg top-4 right-4"
                         >
-                            Add Medical Center
+                            Add Collection Point
                         </button>
-                        <MedicalCenterTable />
+                        <CollectionPointTable />
                         <Alert />
                         <Loading />
                     </div>
@@ -110,7 +109,7 @@ const DSRegisterMedicalCenter = () => {
                 <div className="shadow-xl rounded-xl w-11/12 md:w-2/5 h-7/12 p-6 bg-gray-100 shadow-blue-600 dark:bg-[#151c25] dark:shadow-[#e32970]">
                     <form className="flex flex-col">
                     <div className="flex flex-row justify-between items-center">
-                        <p className="font-semibold text-gray-400">Register Medical Center</p>
+                        <p className="font-semibold text-gray-400">Register Collection Point</p>
                         <button
                         type="button"
                         onClick={closeModal}
@@ -190,5 +189,5 @@ const DSRegisterMedicalCenter = () => {
     )
 }
 
-export default DSRegisterMedicalCenter
+export default DSRegisterCollectionPoint
 

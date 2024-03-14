@@ -4,6 +4,7 @@ import "./DonorContract.sol";
 import "./MedicalCenters.sol";
 import "./TransportContract.sol";
 import "./AccessControl.sol";
+import "./CollectionPointContract.sol";
 
 /**
     @title Blood Donation Blockchain-based System
@@ -69,6 +70,7 @@ contract BloodDonationBlockchainSystem is AccessControl {
     
     mapping(address => mapping(uint256 => MedicalRecord)) public medicalRecords;
     mapping(address => mapping(uint256 => DonationTransaction)) public donationTransactions;
+    mapping(uint256 => DonationTransaction) public allDonationTransactions;
 
     mapping(uint256 => TransportationRecord) public transportationRecords;
     mapping(string => BloodSupply) public bloodSupplies;
@@ -92,13 +94,15 @@ contract BloodDonationBlockchainSystem is AccessControl {
     DonorContract public donorContract;
     MedicalCenters public medicalCenter;
     TransportContract public transportContract;
+    CollectionPointContract public collectionPoint;
 
-    constructor(address _donorContractAddress, address _medicalCenter, address _transAddress) {
+    constructor(address _donorContractAddress, address _medicalCenter, address _transAddress, address collectionPointAddress_) {
         sysowner = SystemOwner(owner, "admin", false);
         sysOwnerMap[owner] = sysowner;
         donorContract = DonorContract(_donorContractAddress);
         medicalCenter = MedicalCenters(_medicalCenter);
         transportContract = TransportContract(_transAddress);
+        collectionPoint = CollectionPointContract(collectionPointAddress_);
     }
 
     modifier onlyMedicalStaff() {
@@ -135,6 +139,18 @@ contract BloodDonationBlockchainSystem is AccessControl {
 
         uint256 transactionID = block.timestamp;
         donationTransactions[_medicalCenterPublicAddress][transactionID] = DonationTransaction({
+            transactionID: transactionID,
+            donor: _donorPublicAddress,
+            recipient: address(0),
+            medicalStaff: msg.sender,
+            transporter: address(0),
+            bloodType: donorContract.readDonors(_donorPublicAddress).bloodType,
+            donationDate: block.timestamp,
+            status: TransactionStatus.Shipped,
+            donatedVolume: _volume,
+            bloodTestResult: "No Result"
+        });
+        allDonationTransactions[transactionID] = DonationTransaction({
             transactionID: transactionID,
             donor: _donorPublicAddress,
             recipient: address(0),
@@ -193,6 +209,35 @@ contract BloodDonationBlockchainSystem is AccessControl {
         bloodTestResult = donationTransaction.bloodTestResult;
     }
 
+    function getAllDonationTransaction(
+        uint256 _transactionID
+    )
+        public
+        view
+        returns (
+            uint256 transactionID,
+            address donorPublicAddress,
+            address recipientPublicAddress,
+            address transporterPublicAddress,
+            string memory bloodType,
+            uint256 donationDate,
+            TransactionStatus status,
+            uint256 donatedVolume,
+            string memory bloodTestResult
+        )
+    {
+        DonationTransaction memory allDonationTransaction = allDonationTransactions[_transactionID];
+        transactionID = allDonationTransaction.transactionID;
+        donorPublicAddress = allDonationTransaction.donor;
+        recipientPublicAddress = allDonationTransaction.recipient;
+        transporterPublicAddress = allDonationTransaction.transporter;
+        bloodType = allDonationTransaction.bloodType;
+        donationDate = allDonationTransaction.donationDate;
+        status = allDonationTransaction.status;
+        donatedVolume = allDonationTransaction.donatedVolume;
+        bloodTestResult = allDonationTransaction.bloodTestResult;
+    }
+
     // ---------------- End Donation initialization ---------------------
 
     // ---------------- Start Complete Donation  ------------------------
@@ -218,6 +263,10 @@ contract BloodDonationBlockchainSystem is AccessControl {
         donationTransactions[msg.sender][_transactionID].bloodType = _bloodType;
         donationTransactions[msg.sender][_transactionID].status = TransactionStatus.Active;
         donationTransactions[msg.sender][_transactionID].bloodTestResult = _bloodTestResults;
+        allDonationTransactions[_transactionID].medicalStaff = msg.sender;
+        allDonationTransactions[_transactionID].bloodType = _bloodType;
+        allDonationTransactions[_transactionID].status = TransactionStatus.Active;
+        allDonationTransactions[_transactionID].bloodTestResult = _bloodTestResults;
         donorContract.updateDonorBloodType(donationTransactions[msg.sender][_transactionID].donor, _bloodType);
         donorContract.updateDonationHistory(donationTransactions[msg.sender][_transactionID].donor, _transactionID);
 
@@ -297,17 +346,17 @@ contract BloodDonationBlockchainSystem is AccessControl {
         );
 
         uint256 transactionID = block.timestamp;
+        address donorAddress_ = donationTransactions[_medicalCenterPublicAddress][_transactionID].donor;
         donationTransactions[_medicalCenterPublicAddress][transactionID] = DonationTransaction({
             transactionID: transactionID,
-            donor: donationTransactions[_medicalCenterPublicAddress][_transactionID].donor,
+            donor: donorAddress_,
             recipient: _recipient,
-            medicalStaff: msg.sender,
+            medicalStaff: _medicalCenterPublicAddress,
             transporter: msg.sender,
             bloodType: donationTransactions[_medicalCenterPublicAddress][_transactionID].bloodType,
             donationDate: donationTransactions[_medicalCenterPublicAddress][_transactionID].donationDate,
             status: donationTransactions[_medicalCenterPublicAddress][_transactionID].status,
-            // donatedVolume: DonorContract.readDonors(donationTransactions[_medicalCenterPublicAddress][_transactionID].donor).donatedVolume,
-            donatedVolume: 300,
+            donatedVolume: donorContract.readDonors(donorAddress_).donatedVolume,
             bloodTestResult: donationTransactions[_medicalCenterPublicAddress][_transactionID].bloodTestResult
         });
     }
