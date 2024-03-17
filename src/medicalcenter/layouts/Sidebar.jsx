@@ -24,15 +24,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         },
         // { title: "Blood Checking", link: "/medical-center/donate-blood-to-medicalcenter", icon: <FaKeycdn /> },
         { title: "Medical Records", link: "/medical-center/medical-records", icon: <FaChartPie /> },
+        { title: "Recipients", link: "/medical-center/recipients", icon: <FaChartPie /> },
         { title: "Blood Supplied", link: "/medical-center/blood-supplied", icon: <FaChartPie /> },
     ]
 
     return (
         <div className="flex relative m-h-screen max-h-full">
             <div
-                className={`self-start sticky32 top-0 inset-y-0 left-0 ${
-                    isOpen ? "w-72" : "w-20"
-                } text-lg font-semibold h-screen duration-300 pt-8 bg-blue-600 dark:bg-[#212936] dark:shadow-md dark:shadow-gray-600`}
+                className={`self-start sticky32 top-0 inset-y-0 left-0 ${isOpen ? "w-72" : "w-20"
+                    } text-lg font-semibold h-screen duration-300 pt-8 bg-blue-600 dark:bg-[#212936] dark:shadow-md dark:shadow-gray-600`}
             >
                 <div className="flex items-center border-b-2 border-b-gray-300 pb-3 border-opacity-35">
                     <span>
@@ -41,9 +41,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         />
                     </span>
                     <h1
-                        className={`text-white origin-left font-medium text-2xl duration-300 ${
-                            !isOpen && "scale-0"
-                        } dark:text-gray-300`}
+                        className={`text-white origin-left font-medium text-2xl duration-300 ${!isOpen && "scale-0"
+                            } dark:text-gray-300`}
                     >
                         Damu Salama
                     </h1>
@@ -52,9 +51,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     {Menus.map((menu, index) => (
                         <li
                             className={`text-gray-300 text-md flex items-center gap-x-4 hover:font-semibold hover:text-purple-800
-                    cursor-pointer py-1 rounded-md ${
-                        menu.gap ? "mt-9" : "mt-2"
-                    } dark:text-gray-500`}
+                    cursor-pointer py-1 rounded-md ${menu.gap ? "mt-9" : "mt-2"
+                                } dark:text-gray-500`}
                             key={index}
                         >
                             <NavLink

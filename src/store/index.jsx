@@ -2,6 +2,7 @@ import { createGlobalState } from 'react-hooks-global-state'
 
 const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   modal: 'scale-0',
+  modal2: 'scale-0',
   updateModal: 'scale-0',
   showModal: 'scale-0',
   alert: { show: false, msg: '', color: '' },
@@ -9,6 +10,7 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   connectedAccount: '',
   donationTransaction: null,
   donors: [],
+  recipients: [],
   donorTransactionHistory: [],
   collectionPoints: [],
   transporters: [],

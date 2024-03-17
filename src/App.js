@@ -12,6 +12,7 @@ import {
   displayMedicalCenter,
   displayMedicalCenters,
   displayMedicalRecord,
+  displayRecipients,
   displayTransporters,
   isWallectConnected,
 } from "./BlockchainService";
@@ -38,6 +39,7 @@ import DonationTransactionRecord from "./Donor/pages/DonationTransactionRecord";
 import TransDashboard from "./transporter/pages/TransDashboard";
 import InitiateTransportation from "./transporter/pages/InitiateTransportation";
 import DSRegisterCollectionPoint from "./damuSalama/pages/DSRegisterCollectionPoint";
+import Recipients from "./medicalcenter/pages/Recipients";
 
 function App() {
   useEffect(() => {
@@ -52,6 +54,7 @@ function App() {
       await displayDonorDonationHistory();
       await displayCollectionPoints();
       await displayBloodSupplied();
+      await displayRecipients();
     };
     isConnected();
   }, []);
@@ -83,6 +86,10 @@ function App() {
         <Route
           path="/medical-center/medical-records"
           element={<MedicalRecords />}
+        />
+        <Route
+          path="/medical-center/recipients"
+          element={<Recipients />}
         />
         <Route
           path="/medical-center/blood-supplied"

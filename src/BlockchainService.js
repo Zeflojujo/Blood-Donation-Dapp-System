@@ -87,7 +87,7 @@ const connectWallet = async () => {
 
 const isWallectConnected = async () => {
   try {
-    if (!ethereum) return window.print("Please install Metamask");
+    if (!ethereum) return console.log("Please install Metamask");
     const accounts = await ethereum.request({ method: "eth_accounts" });
 
     window.ethereum.on("chainChanged", (chainId) => {
@@ -376,7 +376,7 @@ const TransporterLogin = async ({ publicAddress, password }) => {
 
 const displayDonors = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    if (!ethereum) return console.log("Please install Metamask");
 
     const contract = await getDonorContract();
 
@@ -406,7 +406,7 @@ const displayDonors = async () => {
 
 const displayDonorDonationHistory = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    if (!ethereum) return console.log("Please install Metamask");
 
     const donorContract = await getDonorContract();
     const transactionContract = await getEtheriumContract();
@@ -448,7 +448,7 @@ const displayDonorDonationHistory = async () => {
 
 const displayTransporters = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    if (!ethereum) return console.log("Please install Metamask");
 
     const contract = await getTransporterContract();
 
@@ -484,7 +484,7 @@ const displayTransporters = async () => {
 
 const displayMedicalCenters = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    if (!ethereum) return console.log("Please install Metamask");
 
     const contract = await getMedicalCenterContract();
 
@@ -516,7 +516,7 @@ const displayMedicalCenters = async () => {
 
 const displayMedicalCenter = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    // if (!ethereum) return console.log("Please install Metamask");
 
     const contract = await getMedicalCenterContract();
     const medicalCenterAddress = getGlobalState("connectedAccount");
@@ -534,7 +534,7 @@ const displayMedicalCenter = async () => {
 
 const displayCollectionPoints = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    // if (!ethereum) return window.alert("Please install Metamask");
 
     const contract = await getCollectionPointContract();
 
@@ -566,7 +566,7 @@ const displayCollectionPoints = async () => {
 
 const displayDonationTransaction = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    // if (!ethereum) return console.log("Please install Metamask");
 
     const contract = await getEtheriumContract();
     const account = getGlobalState("connectedAccount");
@@ -605,7 +605,7 @@ const displayDonationTransaction = async () => {
 
 const displayBloodSupplied = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    // if (!ethereum) return console.log("Please install Metamask");
 
     const contract = await getEtheriumContract();
     const account = getGlobalState("connectedAccount");
@@ -649,7 +649,7 @@ const displayBloodSupplied = async () => {
 
 const displayMedicalRecord = async () => {
   try {
-    if (!ethereum) return window.alert("Please install Metamask");
+    if (!ethereum) return console.log("Please install Metamask");
 
     const contract = await getEtheriumContract();
     const account = getGlobalState("connectedAccount");
@@ -681,6 +681,45 @@ const displayMedicalRecord = async () => {
     }
 
     setGlobalState("medicalRecords", medicalRecordData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const displayRecipients = async () => {
+  try {
+    // if (!ethereum) return console.log("Please install Metamask");
+
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    const recipientsArray = await contract.methods
+      .getRecipientsArr()
+      .call();
+
+    const recipientsData = [];
+
+    if (recipientsArray.length === 0) {
+      console.log("No Recipients Found");
+    }
+
+    for (let i = 0; i < recipientsArray.length; i++) {
+      const recipientId = recipientsArray[i];
+      // console.log(`the registration number is: ${voterRegNumber}`);
+      const _recipient = await contract.methods
+        .getRecipient(account, recipientId)
+        .call();
+      console.log(
+        "let me see recipientID details: ",
+        _recipient.recipientID
+      );
+      if (_recipient.recipientID !== 0n) {
+        recipientsData.push(_recipient);
+      }
+      // console.log("Recipients :", _recipient);
+    }
+
+    setGlobalState("recipients", recipientsData);
   } catch (error) {
     console.log(error);
   }
@@ -738,6 +777,35 @@ const completeDonationTransactions = async ({
   }
 };
 
+const fullFillBloodToRecipient = async ({
+  transactionId,
+  recipientPublicAddress,
+  recipientName,
+  recipientPhoneNumber,
+  recipientBloodType,
+}) => {
+  try {
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    console.log("am reach at this point");
+
+    await contract.methods
+      .fullFillBloodToRecipient(
+        Number(transactionId),
+        recipientPublicAddress,
+        recipientName,
+        recipientPhoneNumber,
+        recipientBloodType
+      )
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 export {
   connectWallet,
   isWallectConnected,
@@ -750,6 +818,7 @@ export {
   donorLogin,
   TransporterLogin,
   displayDonors,
+  displayRecipients,
   displayDonorDonationHistory,
   displayTransporters,
   displayDonationTransaction,
@@ -760,6 +829,7 @@ export {
   displayBloodSupplied,
   initiateDonationTransaction,
   completeDonationTransactions,
+  fullFillBloodToRecipient,
   deleteDonor,
   registerCollectionPoint,
 };
