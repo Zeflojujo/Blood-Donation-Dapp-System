@@ -4,7 +4,7 @@ import { setAlert, setGlobalState, setLoadingMsg, truncate, useGlobalState } fro
 import { FaTimes } from 'react-icons/fa';
 import Alert from '../../+homedirectory/components/Alert';
 import Loading from '../../+homedirectory/components/Loding';
-import { fullFillBloodToRecipient, completeDonationTransactions } from '../../BlockchainService';
+import { fullFillBloodToRecipient, completeDonationTransactions, supplyBlood } from '../../BlockchainService';
 
 
 const TransactionTable = () => {
@@ -80,7 +80,7 @@ const TransactionTable = () => {
     if (!transactionId || !recipientPublicAddress || !recipientName || !recipientPhoneNumber || !recipientBloodType) return
 
     setGlobalState('modal2', 'scale-0')
-    setGlobalState('loading', { show: true, msg: 'Blood Testing...' })
+    setGlobalState('loading', { show: true, msg: 'Blood is Fullfilled...' })
 
     try {
 
@@ -90,6 +90,34 @@ const TransactionTable = () => {
       if (result) {
         resetForm()
         setAlert('Blood is fullfillied to recipient...!!', 'green')
+        window.location.reload()
+
+      } else {
+        throw Error
+      }
+
+    } catch (error) {
+      console.log('Error blood fullfillied to recipient: ', error.message)
+      setAlert('Blood Fullfill failed...', 'red')
+    }
+  }
+
+  const handleSupplyBlood = async (e) => {
+    e.preventDefault()
+
+    if (!transactionId) return
+
+    // setGlobalState('modal2', 'scale-0')
+    setGlobalState('loading', { show: true, msg: 'Blood Supply...' })
+
+    try {
+
+      setLoadingMsg('Initializing transaction...')
+      const result = await supplyBlood({ transactionId })
+      console.log("result: ", result)
+      if (result) {
+        resetForm()
+        setAlert('Blood is Supplied ...!!', 'green')
         window.location.reload()
 
       } else {
@@ -132,13 +160,16 @@ const TransactionTable = () => {
   const completeDonationTransaction = async (_transactionID) => {
     setGlobalState('modal', 'scale-100')
     setGlobalState('transactionId', _transactionID)
-    // setTransactionID(_transactionID)
   }
 
   const FullFillDonationTransaction = async (_transactionID) => {
     setGlobalState('modal2', 'scale-100')
     setGlobalState('transactionId', _transactionID)
-    // setTransactionID(_transactionID)
+  }
+
+  const supplyBloodTransaction = async (_transactionID) => {
+    setGlobalState('transactionId', _transactionID)
+    handleSupplyBlood();
   }
 
   return (
@@ -202,8 +233,7 @@ const TransactionTable = () => {
                     {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
                     <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Complete</button></td>
                     <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => FullFillDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-purple-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-purple-400'>FullFill</button></td>
-                    {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => deleteNewsHandler(item.id)} className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
-                    {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => UpdataNewsHandler(item.id)} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Update</button></td> */}
+                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => supplyBloodTransaction(donation.transactionID.toString())} className='border border-solid bg-orange-400 hover:bg-orange-600 active:bg-orange-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-purple-400'>Supply</button></td>
                   </tr>
                 )))}
             </tbody>

@@ -155,9 +155,4 @@ contract DonorContract is AccessControl{
         donors[donorAddress_] = donor;
         emit deletedDonor(donorAddress_);
     }
-
-    // /// @dev this is helper function
-    // function compareString(string memory _a, string memory _b) internal pure returns(bool) {
-    //     return keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b));
-    // }
 }

@@ -4,7 +4,7 @@ import { setAlert, setGlobalState, setLoadingMsg, truncate, useGlobalState } fro
 import { FaTimes } from 'react-icons/fa';
 import Alert from '../../+homedirectory/components/Alert';
 import Loading from '../../+homedirectory/components/Loding';
-import { completeDonationTransactions } from '../../BlockchainService';
+import { approvalBloodSupplied, completeDonationTransactions, requestBloodSupply } from '../../BlockchainService';
 
 
 const BloodSuppliedTable = () => {
@@ -21,9 +21,9 @@ const BloodSuppliedTable = () => {
   const [end, setEnd] = useState(5)
 
   // const [transactionID, setTransactionID] = useState("")
-  const [transporter, setTransporter] = useState("")
-  const [medicalCenterPublicAddress, setMedicalCenterPublicAddress] = useState("")
+  const [transporterAddress, setTransporterAddress] = useState("")
   const [MCPublicAddress, setMCPublicAddress] = useState("")
+  const [requesterAddress, setRequesterAddress] = useState("")
 
 
 
@@ -48,7 +48,7 @@ const BloodSuppliedTable = () => {
   const handleApproveBloodSupply = async (e) => {
     e.preventDefault()
 
-    if (!transactionId || !transporter) return
+    if (!transactionId || !transporterAddress) return
 
     setGlobalState('modal', 'scale-0')
     setGlobalState('loading', { show: true, msg: 'Blood Testing...' })
@@ -56,7 +56,7 @@ const BloodSuppliedTable = () => {
     try {
 
       setLoadingMsg('Initializing transaction...')
-      const result = await completeDonationTransactions({ transactionId, transporter })
+      const result = await approvalBloodSupplied({ transactionId, transporterAddress })
       console.log("result: ", result)
       if (result) {
         resetForm()
@@ -76,7 +76,7 @@ const BloodSuppliedTable = () => {
   const handleRequestBloodSupplied = async (e) => {
     e.preventDefault()
 
-    if (!transactionId || !transporter) return
+    if (!transactionId || !MCPublicAddress || !requesterAddress) return
 
     setGlobalState('modal2', 'scale-0')
     setGlobalState('loading', { show: true, msg: 'Blood Testing...' })
@@ -84,7 +84,7 @@ const BloodSuppliedTable = () => {
     try {
 
       setLoadingMsg('Initializing transaction...')
-      const result = await completeDonationTransactions({ transactionId, medicalCenterPublicAddress })
+      const result = await requestBloodSupply({ transactionId, MCPublicAddress, requesterAddress })
       console.log("result: ", result)
       if (result) {
         resetForm()
@@ -112,9 +112,20 @@ const BloodSuppliedTable = () => {
     return enumMappings[enumValue];
   }
 
+  const handleConvertSupplyStatus = (enumValue) => {
+    // Define your enum mappings
+    const enumMappings = {
+      0: 'Available',
+      1: 'Requested',
+      2: 'Approved'
+    };
+    // Return the string representation of the enum value
+    return enumMappings[enumValue];
+  }
+
   const resetForm = () => {
-    setTransporter("")
-    setMedicalCenterPublicAddress("")
+    setTransporterAddress("")
+    setMCPublicAddress("")
   }
 
   const getDonors = () => {
@@ -132,10 +143,10 @@ const BloodSuppliedTable = () => {
     // setTransactionID(_transactionID)
   }
 
-  const completeRequestBloodSupplied = async (_transactionID) => {
+  const completeRequestBloodSupplied = async (_transactionID, MCPublicAddress_) => {
     setGlobalState('modal2', 'scale-100')
     setGlobalState('transactionId', _transactionID)
-    // setTransactionID(_transactionID)
+    setMCPublicAddress(MCPublicAddress_)
   }
 
   return (
@@ -162,8 +173,8 @@ const BloodSuppliedTable = () => {
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">Transporter</th>
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">BloodType</th>
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">Vol.(in ML)</th>
-                <th className="py-2 px-4 border-b text-center text-lg uppercase">Status</th>
-                <th className="py-2 px-4 border-b text-center text-lg uppercase">BloodTestResult</th>
+                <th className="py-2 px-4 border-b text-center text-lg uppercase">Supply-Status</th>
+                <th className="py-2 px-4 border-b text-center text-lg uppercase">TestResult</th>
 
                 <th className="py-2 px-4 text-center text-lg uppercase">Actions</th>
               </tr>
@@ -186,17 +197,18 @@ const BloodSuppliedTable = () => {
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{index + 1}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{bloodSupplied.transactionID.toString()}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{bloodSupplied.medicalCenterName}</td>
-                    <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>--</td>
+                    <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(bloodSupplied.requester, 7, 5, 15)}</td>
                     {/* <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{bloodSupplied.medicalStaff}</td> */}
                     {/* <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{bloodSupplied.donorName}</td> */}
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{truncate(bloodSupplied.transporterPublicAddress, 7, 5, 15)}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{bloodSupplied.bloodType}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{bloodSupplied.donatedVolume.toString()}</td>
-                    <td className={`py-2 px-4 text-gray-700 text-sm border-b  text-center dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><span className={`rounded-full py-1 px-2.5  ${bloodSupplied.status.toString() === "0" ? 'bg-yellow-200' : bloodSupplied.status.toString() === "1" ? 'bg-green-200' : 'bg-red-400'}`}>{handleConvertTransactionStatus(bloodSupplied.status.toString())}</span></td>
+                    {/* <td className={`py-2 px-4 text-gray-700 text-sm border-b  text-center dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><span className={`rounded-full py-1 px-2.5  ${bloodSupplied.status.toString() === "0" ? 'bg-yellow-200' : bloodSupplied.status.toString() === "1" ? 'bg-green-200' : 'bg-red-400'}`}>{handleConvertTransactionStatus(bloodSupplied.status.toString())}</span></td> */}
+                    <td className={`py-2 px-4 text-gray-700 text-sm border-b  text-center dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><span className={`rounded-full py-1 px-2.5  ${bloodSupplied.supplyStatus.toString() === "0" ? 'bg-yellow-200' : bloodSupplied.supplyStatus.toString() === "1" ? 'bg-green-200' : 'bg-red-400'}`}>{handleConvertSupplyStatus(bloodSupplied.supplyStatus.toString())}</span></td>
                     <td className={`py-2 px-4 text-gray-700 text-base border-b text-center dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{bloodSupplied.bloodTestResult}</td>
 
                     {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
-                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{connectedAccount.toUpperCase() !== bloodSupplied.medicalStaff.toUpperCase() ? (<button onClick={() => completeRequestBloodSupplied(bloodSupplied.transactionID.toString())} className='border border-solid bg-pink-400 hover:bg-pink-600 active:bg-pink-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-pink-400 rounded-sm'>Request</button>) : (<button onClick={() => completeApprovalBloodSupplied(bloodSupplied.transactionID.toString())} className='border border-solid rounded-sm bg-orange-400 hover:bg-orange-600 active:bg-orange-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-pink-400 rounded-sm'>Approve</button>)}</td>
+                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{connectedAccount.toUpperCase() !== bloodSupplied.medicalStaff.toUpperCase() ? (<button onClick={() => completeRequestBloodSupplied(bloodSupplied.transactionID.toString(), bloodSupplied.medicalStaff)} className='border border-solid bg-pink-400 hover:bg-pink-600 active:bg-pink-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-pink-400 rounded-sm'>Request</button>) : (<button onClick={() => completeApprovalBloodSupplied(bloodSupplied.transactionID.toString())} className='border border-solid rounded-sm bg-orange-400 hover:bg-orange-600 active:bg-orange-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-pink-400 rounded-sm'>Approve</button>)}</td>
 
                     {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeRequestBloodSupplied(bloodSupplied.transactionID.toString())} className='border border-solid bg-pink-400 hover:bg-pink-600 active:bg-pink-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-pink-400 rounded-sm'>Request</button></td> */}
                     {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeApprovalBloodSupplied(bloodSupplied.transactionID.toString())} className='border border-solid bg-pink-400 hover:bg-pink-600 active:bg-pink-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-pink-400 rounded-sm'>Approve</button></td> */}
@@ -246,14 +258,14 @@ const BloodSuppliedTable = () => {
             </div>
 
             <div className="mt-4">
-              <label htmlFor="transporter" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+              <label htmlFor="transporterAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
                 Transporter Name:
               </label>
               <select
                 className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
-                name="transporter"
-                onChange={(e) => setTransporter(e.target.value)}
-                value={transporter}
+                name="transporterAddress"
+                onChange={(e) => setTransporterAddress(e.target.value)}
+                value={transporterAddress}
                 required
               >
                 <option value="" disabled>Select Medical Center Public Address</option>
@@ -318,30 +330,15 @@ const BloodSuppliedTable = () => {
               />
             </div>
 
-            {/* <div className="mt-4">
-              <label htmlFor="medicalCenterPublicAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
-                Medical Center Public Address:
-              </label>
-              <input
-                className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
-                type="text"
-                name="medicalCenterPublicAddress"
-                placeholder="Medical-Center PublicAddress"
-                onChange={(e) => setMedicalCenterPublicAddress(e.target.value)}
-                value={medicalCenterPublicAddress}
-                required
-              />
-            </div> */}
-
             <div className="mt-4">
-              <label htmlFor="MCPublicAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+              <label htmlFor="requesterAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
                 Medical Center Name:
               </label>
               <select
                 className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
-                name="MCPublicAddress"
-                onChange={(e) => setMCPublicAddress(e.target.value)}
-                value={MCPublicAddress}
+                name="requesterAddress"
+                onChange={(e) => setRequesterAddress(e.target.value)}
+                value={requesterAddress}
                 required
               >
                 <option value="" disabled>Select Medical Center Public Address</option>

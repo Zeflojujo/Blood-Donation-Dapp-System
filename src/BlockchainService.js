@@ -634,7 +634,7 @@ const displayBloodSupplied = async () => {
       );
       if (
         _donationTransaction.bloodTestResult === "ACCEPTED" &&
-        _donationTransaction.status === 1n
+        _donationTransaction.status === 1n && _donationTransaction.supplyStatus !== 2n
       ) {
         donationTransactionData.push(_donationTransaction);
       }
@@ -788,8 +788,6 @@ const fullFillBloodToRecipient = async ({
     const contract = await getEtheriumContract();
     const account = getGlobalState("connectedAccount");
 
-    console.log("am reach at this point");
-
     await contract.methods
       .fullFillBloodToRecipient(
         Number(transactionId),
@@ -797,6 +795,73 @@ const fullFillBloodToRecipient = async ({
         recipientName,
         recipientPhoneNumber,
         recipientBloodType
+      )
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const requestBloodSupply = async ({
+  transactionId,
+  MCPublicAddress,
+  requesterAddress,
+}) => {
+  try {
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .requestBloodSupply(
+        Number(transactionId),
+        MCPublicAddress,
+        requesterAddress
+      )
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const approvalBloodSupplied = async ({
+  transactionId,
+  transporterAddress,
+}) => {
+  try {
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    await contract.methods
+      .approvalBloodSupplied(
+        Number(transactionId),
+        account,
+        transporterAddress,
+      )
+      .send({ from: account, gas: 1000000 });
+
+    return true;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const supplyBlood = async ({
+  transactionId,
+}) => {
+  try {
+    const contract = await getEtheriumContract();
+    const account = getGlobalState("connectedAccount");
+
+    // console.log("am reach at this point");
+
+    await contract.methods
+      .supply(
+        Number(transactionId),
+        account,
       )
       .send({ from: account, gas: 1000000 });
 
@@ -830,6 +895,9 @@ export {
   initiateDonationTransaction,
   completeDonationTransactions,
   fullFillBloodToRecipient,
+  requestBloodSupply,
+  approvalBloodSupplied,
+  supplyBlood,
   deleteDonor,
   registerCollectionPoint,
 };

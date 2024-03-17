@@ -17,7 +17,7 @@ import "./CollectionPointContract.sol";
 contract BloodDonationBlockchainSystem is AccessControl {
     enum TransactionStatus { Shipped, Active, Fullfilled }
     enum TransportationStatus { InTransit, Delivered }
-    enum BloodSupplyStatus { Available, Requested }
+    enum BloodSupplyStatus { Available, Requested, Approved }
 
     /// @dev create system account structure
     struct SystemOwner {
@@ -31,6 +31,9 @@ contract BloodDonationBlockchainSystem is AccessControl {
         address donor;
         address recipient;
         address medicalStaff;
+        address requester;
+        bool isSupplied;
+        BloodSupplyStatus supplyStatus;
         string medicalCenterName;
         address transporter;
         string bloodType;
@@ -155,6 +158,9 @@ contract BloodDonationBlockchainSystem is AccessControl {
             donor: _donorPublicAddress,
             recipient: address(0),
             medicalStaff: msg.sender,
+            requester: address(0),
+            isSupplied: false,
+            supplyStatus: BloodSupplyStatus.Available,
             medicalCenterName: medicalCenter.readMedicalCenter(_medicalCenterPublicAddress).name,
             transporter: address(0),
             bloodType: donorContract.readDonors(_donorPublicAddress).bloodType,
@@ -168,6 +174,9 @@ contract BloodDonationBlockchainSystem is AccessControl {
             donor: _donorPublicAddress,
             recipient: address(0),
             medicalStaff: msg.sender,
+            requester: address(0),
+            isSupplied: false,
+            supplyStatus: BloodSupplyStatus.Available,
             medicalCenterName: medicalCenter.readMedicalCenter(_medicalCenterPublicAddress).name,
             transporter: address(0),
             bloodType: donorContract.readDonors(_donorPublicAddress).bloodType,
@@ -203,6 +212,9 @@ contract BloodDonationBlockchainSystem is AccessControl {
             string memory donorName,
             address recipientPublicAddress,
             address medicalStaff,
+            address requester,
+            bool isSupplied,
+            BloodSupplyStatus supplyStatus,
             string memory medicalCenterName,
             address transporterPublicAddress,
             string memory bloodType,
@@ -218,6 +230,9 @@ contract BloodDonationBlockchainSystem is AccessControl {
         donorName = donorContract.readDonors(donationTransaction.donor).name;
         recipientPublicAddress = donationTransaction.recipient;
         medicalStaff = donationTransaction.medicalStaff;
+        requester = donationTransaction.requester;
+        isSupplied = donationTransaction.isSupplied;
+        supplyStatus = donationTransaction.supplyStatus;
         transporterPublicAddress = donationTransaction.transporter;
         medicalCenterName = donationTransaction.medicalCenterName;
         bloodType = donationTransaction.bloodType;
@@ -238,6 +253,9 @@ contract BloodDonationBlockchainSystem is AccessControl {
             string memory donorName,
             address recipientPublicAddress,
             address medicalStaff,
+            address requester,
+            bool isSupplied,
+            BloodSupplyStatus supplyStatus,
             string memory medicalCenterName,
             address transporterPublicAddress,
             string memory bloodType,
@@ -253,6 +271,9 @@ contract BloodDonationBlockchainSystem is AccessControl {
         donorName = donorContract.readDonors(allDonationTransaction.donor).name;
         recipientPublicAddress = allDonationTransaction.recipient;
         medicalStaff = allDonationTransaction.medicalStaff;
+        requester = allDonationTransaction.requester;
+        isSupplied = allDonationTransaction.isSupplied;
+        supplyStatus = allDonationTransaction.supplyStatus;
         medicalCenterName = allDonationTransaction.medicalCenterName;
         transporterPublicAddress = allDonationTransaction.transporter;
         bloodType = allDonationTransaction.bloodType;
@@ -425,52 +446,6 @@ contract BloodDonationBlockchainSystem is AccessControl {
 
     // ---------------- End Complete Donation  ------------------------
 
-    /*function initiateTransportation(
-        address _medicalCenterPublicAddress,
-        uint256 _transactionID,
-        address _recipient
-        // string memory _medicalCenter
-    ) public {
-        require(
-            donationTransactions[_medicalCenterPublicAddress][_transactionID].status ==
-                TransactionStatus.Active,
-            "Medical center process not Active"
-        );
-
-        uint256 transactionID = block.timestamp;
-        address donorAddress_ = donationTransactions[_medicalCenterPublicAddress][_transactionID].donor;
-        donationTransactions[_medicalCenterPublicAddress][transactionID] = DonationTransaction({
-            transactionID: transactionID,
-            donor: donorAddress_,
-            recipient: _recipient,
-            medicalStaff: _medicalCenterPublicAddress,
-            medicalCenterName: donationTransactions[_medicalCenterPublicAddress][_transactionID].medicalCenterName,
-            transporter: msg.sender,
-            bloodType: donationTransactions[_medicalCenterPublicAddress][_transactionID].bloodType,
-            donationDate: donationTransactions[_medicalCenterPublicAddress][_transactionID].donationDate,
-            status: donationTransactions[_medicalCenterPublicAddress][_transactionID].status,
-            donatedVolume: donorContract.readDonors(donorAddress_).donatedVolume,
-            bloodTestResult: donationTransactions[_medicalCenterPublicAddress][_transactionID].bloodTestResult
-        });
-    }*/
-
-    /*function completeTransportation(
-        address _medicalCenterPublicAddress,
-        uint256 _recordID,
-        uint256 _transactionID
-    ) public {
-        // onlyTransporter
-        require(
-            transportationRecords[_recordID].status ==
-                TransportationStatus.InTransit,
-            "Transportation already completed or not initiated"
-        );
-        transportationRecords[_recordID].deliveryDateTime = block.timestamp;
-        transportationRecords[_recordID].status = TransportationStatus
-            .Delivered;
-        donationTransactions[_medicalCenterPublicAddress][_transactionID].transporter = msg.sender;
-    }*/
-
     // function calculatePayment(
     //     uint256 _transactionID
     // ) internal view returns (uint256) {
@@ -486,11 +461,42 @@ contract BloodDonationBlockchainSystem is AccessControl {
     //     return _donatedVolume * paymentRate;
     // }
 
-    function RequestBloodSupply(uint256 transactionID_, address medicalCenterPublicAddress_ ) public {
+    function requestBloodSupply(uint256 _transactionID, address _medicalCenterPublicAddress , address requester_) external {
+        DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
+        DonationTransaction storage allDonationTransaction = allDonationTransactions[_transactionID];
+        donationTransaction.requester = requester_;
+        donationTransaction.supplyStatus = BloodSupplyStatus.Requested;
+        donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
+
+        allDonationTransaction.requester = requester_;
+        allDonationTransaction.supplyStatus = BloodSupplyStatus.Requested;
+        allDonationTransactions[_transactionID] = donationTransaction;
+    }
+
+    function approvalBloodSupplied(uint256 _transactionID, address _medicalCenterPublicAddress, address transporterAddress_ ) external {
+
+        DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
+        DonationTransaction storage allDonationTransaction = allDonationTransactions[_transactionID];
+
+        donationTransaction.transporter = transporterAddress_;
+        donationTransaction.supplyStatus = BloodSupplyStatus.Approved;
+        donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
+
+        allDonationTransaction.transporter = transporterAddress_;
+        allDonationTransaction.supplyStatus = BloodSupplyStatus.Approved;
+        allDonationTransactions[_transactionID] = donationTransaction;
 
     }
 
-    function ApprovalBloodSupplied(uint256 transactionID_, address medicalCenterPublicAddress_, address transporterAddress_ ) public {
+    function supply(address _medicalCenterPublicAddress, uint256 _transactionID) external {
+        DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
+        DonationTransaction storage allDonationTransaction = allDonationTransactions[_transactionID];
+
+        donationTransaction.isSupplied = true;
+        donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
+
+        allDonationTransaction.isSupplied = true;
+        allDonationTransactions[_transactionID] = donationTransaction;
 
     }
 
