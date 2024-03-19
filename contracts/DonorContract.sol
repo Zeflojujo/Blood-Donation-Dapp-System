@@ -11,6 +11,7 @@ contract DonorContract is AccessControl{
         address donorPublicAddress;
         string name;
         uint256 age;
+        uint256 weight;
         string gender;
         string bloodType;
         string phoneNumber;
@@ -31,6 +32,14 @@ contract DonorContract is AccessControl{
 
     constructor(address collectionPointAddress_) {
         collectionPoint = CollectionPointContract(collectionPointAddress_);
+    }
+
+    modifier onlyCollectionPoint() {
+        require(
+            collectionPoint.readCollectionPoint(msg.sender).CPPublicAddress == msg.sender,
+            "Only collection point can perform this action"
+        );
+        _;
     }
 
     function updateVolume(address _donodAddress, uint256 _newVolume) external {
@@ -58,10 +67,11 @@ contract DonorContract is AccessControl{
         address _donorPublicAddress,
         string memory _name,
         uint256 _age,
+        uint256 _weight,
         string memory _gender,
         string memory _contactNumber,
         string memory _password
-    ) external noReentrancy {
+    ) external noReentrancy onlyCollectionPoint{
         require(
             donors[_donorPublicAddress].isRegistered == false || donors[_donorPublicAddress].isDeleted,
             "Donor is already registered"
@@ -70,6 +80,7 @@ contract DonorContract is AccessControl{
             donorPublicAddress: _donorPublicAddress,
             name: _name,
             age: _age,
+            weight: _weight,
             gender: _gender,
             bloodType: "--",
             phoneNumber: _contactNumber,
@@ -122,6 +133,7 @@ contract DonorContract is AccessControl{
             address publicAddress,
             string memory name,
             uint256 age,
+            uint256 weight,
             string memory bloodType,
             string memory gender,
             string memory phoneNumber,
@@ -136,7 +148,8 @@ contract DonorContract is AccessControl{
         Donor memory donor = donors[_donorPublicAddress];
         publicAddress = donor.donorPublicAddress;
         name = donor.name;
-        age = donor.age; 
+        age = donor.age;
+        weight = donor.weight; 
         bloodType = donor.bloodType;
         gender = donor.gender;
         phoneNumber = donor.phoneNumber;

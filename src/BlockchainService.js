@@ -114,6 +114,7 @@ const addDonor = async ({
   publicAddress,
   name,
   age,
+  weight,
   gender,
   phoneNumber,
   password,
@@ -123,7 +124,7 @@ const addDonor = async ({
     const account = getGlobalState("connectedAccount");
 
     await contract.methods
-      .addDonor(publicAddress, name, age, gender, phoneNumber, password)
+      .addDonor(publicAddress, name, age, weight, gender, phoneNumber, password)
       .send({ from: account, gas: 1000000 });
 
     return true;
@@ -163,12 +164,14 @@ const deleteDonor = async ({ publicAddress }) => {
 // const addDonor = async ({
 //   publicAddress,
 //   name,
-//   bloodType,
+//   age,
+//   weight,
+//   gender,
 //   phoneNumber,
 //   password,
 // }) => {
 //   try {
-//     const contract = await getEtheriumContract();
+//     const contract = await getDonorContract();
 //     // const web3 = getWeb3Instance(); // Assuming you have a function to get web3 instance
 //     const account = getGlobalState("connectedAccount");
 
@@ -179,12 +182,13 @@ const deleteDonor = async ({ publicAddress }) => {
 //     const transactionObject = contract.methods.addDonor(
 //       publicAddress,
 //       name,
-//       bloodType,
+//       age,
+//       weight,
+//       gender,
 //       phoneNumber,
-//       password
+//       password,
 //     );
 
-//     // Estimate gas
 //     const gasEstimate = await transactionObject.estimateGas();
 
 //     // Get the gas price
@@ -446,6 +450,51 @@ const displayDonorDonationHistory = async () => {
   }
 };
 
+
+const displayTransporterDonationTransfer = async () => {
+  try {
+    if (!ethereum) return console.log("Please install Metamask");
+
+    const transpoterContract = await getTransporterContract();
+    const transactionContract = await getEtheriumContract();
+    const transporterAddress = getGlobalState("connectedAccount");
+
+    const _transporter = await transpoterContract.methods.getTransporter(transporterAddress).call();
+
+    console.log("Transporter data: ", _transporter);
+    console.log(
+      "Transporter transactionIdHistoryArray: ",
+      _transporter.transporterTransactionHistory
+    );
+
+    const transporterTransactionArray = _transporter.transporterTransactionHistory;
+
+    const transporterTransactionData = [];
+
+    for (let i = 0; i < transporterTransactionArray.length; i++) {
+      const transactionId = transporterTransactionArray[i];
+      // console.log(`the registration number is: ${voterRegNumber}`);
+      const _donationTransaction = await transactionContract.methods
+        .getAllDonationTransaction(transactionId)
+        .call();
+      console.log(
+        "donation of blood for specific medical center: ",
+        _donationTransaction.transactionID
+      );
+      // if (_donationTransaction.transactionID !== 0n) {
+        transporterTransactionData.push(_donationTransaction);
+      // }
+      // console.log("Donation Transaction :", _donationTransaction);
+    }
+
+    setGlobalState("transporterTransactionHistory", transporterTransactionData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
 const displayTransporters = async () => {
   try {
     if (!ethereum) return console.log("Please install Metamask");
@@ -608,7 +657,6 @@ const displayBloodSupplied = async () => {
     // if (!ethereum) return console.log("Please install Metamask");
 
     const contract = await getEtheriumContract();
-    const account = getGlobalState("connectedAccount");
 
     const transactionIdArray = await contract.methods
       .getDonationTransactionArr()
@@ -885,6 +933,7 @@ export {
   displayDonors,
   displayRecipients,
   displayDonorDonationHistory,
+  displayTransporterDonationTransfer,
   displayTransporters,
   displayDonationTransaction,
   displayMedicalCenters,

@@ -22,6 +22,8 @@ const TransactionTable = () => {
   const [hemoglobinLevel, setHemoglobinLevel] = useState("")
   const [bloodPressure, setBloodPressure] = useState("")
   const [bloodTestResults, setBloodTestResults] = useState("")
+  const [HIV, setHIV] = useState("")
+  const [liverFever, setLiverFever] = useState("")
 
   const [recipientPublicAddress, setRecipientPublicAddress] = useState("")
   const [recipientName, setRecipientName] = useState("")
@@ -49,7 +51,7 @@ const TransactionTable = () => {
   const handleCompleteTransaction = async (e) => {
     e.preventDefault()
 
-    if (!transactionId || !bloodType || !hemoglobinLevel || !bloodPressure || !bloodTestResults) return
+    if (!transactionId || !bloodType || !HIV || !liverFever || !hemoglobinLevel || !bloodPressure || !bloodTestResults) return
 
     setGlobalState('modal', 'scale-0')
     setGlobalState('loading', { show: true, msg: 'Blood Testing...' })
@@ -57,7 +59,7 @@ const TransactionTable = () => {
     try {
 
       setLoadingMsg('Initializing transaction...')
-      const result = await completeDonationTransactions({ transactionId, bloodType, bloodPressure, hemoglobinLevel, bloodTestResults })
+      const result = await completeDonationTransactions({ transactionId, bloodType, HIV, liverFever, bloodPressure, hemoglobinLevel, bloodTestResults })
       console.log("result: ", result)
       if (result) {
         resetForm()
@@ -125,8 +127,8 @@ const TransactionTable = () => {
       }
 
     } catch (error) {
-      console.log('Error blood fullfillied to recipient: ', error.message)
-      setAlert('Blood Fullfill failed...', 'red')
+      console.log('Error blood Supply: ', error.message)
+      setAlert('Blood Supply failed...', 'red')
     }
   }
 
@@ -167,9 +169,9 @@ const TransactionTable = () => {
     setGlobalState('transactionId', _transactionID)
   }
 
-  const supplyBloodTransaction = async (_transactionID) => {
+  const supplyBloodTransaction = async (e, _transactionID) => {
     setGlobalState('transactionId', _transactionID)
-    handleSupplyBlood();
+    handleSupplyBlood(e);
   }
 
   return (
@@ -233,7 +235,7 @@ const TransactionTable = () => {
                     {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
                     <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Complete</button></td>
                     <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => FullFillDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-purple-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-purple-400'>FullFill</button></td>
-                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => supplyBloodTransaction(donation.transactionID.toString())} className='border border-solid bg-orange-400 hover:bg-orange-600 active:bg-orange-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-purple-400'>Supply</button></td>
+                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={(e) => supplyBloodTransaction(e, donation.transactionID.toString())} className='border border-solid bg-orange-400 hover:bg-orange-600 active:bg-orange-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-purple-400'>Supply</button></td>
                   </tr>
                 )))}
             </tbody>
@@ -297,6 +299,40 @@ const TransactionTable = () => {
                 <option value="AB-">AB-</option>
                 <option value="O+">O+</option>
                 <option value="O-">O-</option>
+              </select>
+            </div>
+
+            <div className="mt-4">
+              <label htmlFor="HIV" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+                HIV Test:
+              </label>
+              <select
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
+                name="HIV"
+                onChange={(e) => setHIV(e.target.value)}
+                value={HIV}
+                required
+              >
+                <option value="" disabled>Select HIV Result</option>
+                <option value="positive">ve+</option>
+                <option value="negative">ve-</option>
+              </select>
+            </div>
+
+            <div className="mt-4">
+              <label htmlFor="liverFever" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+                Liver Fever:
+              </label>
+              <select
+                className="mt-1 px-3 py-1.5 md:py-2 w-full border border-solid border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding appearance-none"
+                name="liverFever"
+                onChange={(e) => setLiverFever(e.target.value)}
+                value={liverFever}
+                required
+              >
+                <option value="" disabled>Select Liver Fever Result</option>
+                <option value="positive">ve+</option>
+                <option value="negative">ve-</option>
               </select>
             </div>
 

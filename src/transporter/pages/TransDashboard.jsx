@@ -38,22 +38,22 @@ const TransDashboard = () => {
 
                             <div className="flex flex-col justify-center items-center w-full shadow-lg bg-gray-100 shadow-blue-600 dark:shadow-black rounded-md overflow-hidden dark:bg-gray-800 my-2 p-6">
                                 <h4 className="text-white text-2xl font-semibold text-gradient">Collection Point</h4>
-                                <p className="text-[#bd255f] font-semibold text-xl my-1">56 Places</p>
+                                <p className="text-[#bd255f] font-semibold text-xl my-1">2 Places</p>
                             </div>
 
                             <div className="flex flex-col justify-center items-center w-full shadow-lg bg-gray-100 shadow-blue-600 dark:shadow-black rounded-md overflow-hidden dark:bg-gray-800 my-2 p-6">
                                 <h4 className="text-white text-2xl font-semibold text-gradient">Donors</h4>
-                                <p className="text-[#bd255f] font-semibold text-xl my-1">3452</p>
+                                <p className="text-[#bd255f] font-semibold text-xl my-1">3</p>
                             </div>
 
                             <div className="flex flex-col justify-center items-center w-full shadow-lg bg-gray-100 shadow-blue-600 dark:shadow-black rounded-md overflow-hidden dark:bg-gray-800 my-2 p-6">
                                 <h4 className="text-white text-2xl font-semibold text-gradient">Medical Center</h4>
-                                <p className="text-[#bd255f] font-semibold text-xl my-1">21</p>
+                                <p className="text-[#bd255f] font-semibold text-xl my-1">3</p>
                             </div>
 
                             <div className="flex flex-col justify-center items-center w-full shadow-lg bg-gray-100 shadow-blue-600 dark:shadow-black rounded-md overflow-hidden dark:bg-gray-800 my-2 p-6">
                                 <h4 className="text-white text-2xl font-semibold text-gradient">Transporters</h4>
-                                <p className="text-[#bd255f] font-semibold text-xl my-1">35</p>
+                                <p className="text-[#bd255f] font-semibold text-xl my-1">2</p>
                             </div>
 
                         </div>

@@ -48,6 +48,8 @@ contract BloodDonationBlockchainSystem is AccessControl {
         uint256 transactionID;
         address donor;
         address medicalStaff;
+        string HIV;
+        string liverFever;
         string bloodType;
         uint256 bloodPressure;
         uint256 hemoglobinLevel;
@@ -290,6 +292,8 @@ contract BloodDonationBlockchainSystem is AccessControl {
     function completeDonationToMedicalCenter(
         uint256 _transactionID,
         string memory _bloodType,
+        string memory _HIV,
+        string memory _liverFever,
         uint256 _bloodPressure,
         uint256 _hemoglobinLevel,
         string memory _bloodTestResults
@@ -321,6 +325,8 @@ contract BloodDonationBlockchainSystem is AccessControl {
             transactionID: _transactionID,
             donor: donationTransactions[msg.sender][_transactionID].donor,
             bloodType: _bloodType,
+            HIV: _HIV,
+            liverFever: _liverFever,
             medicalStaff: msg.sender,
             bloodPressure: _bloodPressure,
             hemoglobinLevel: _hemoglobinLevel,
@@ -461,9 +467,11 @@ contract BloodDonationBlockchainSystem is AccessControl {
     //     return _donatedVolume * paymentRate;
     // }
 
-    function requestBloodSupply(uint256 _transactionID, address _medicalCenterPublicAddress , address requester_) external {
+    function requestBloodSupply(uint256 _transactionID, address _medicalCenterPublicAddress , address requester_) external onlyMedicalStaff {
         DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
         DonationTransaction storage allDonationTransaction = allDonationTransactions[_transactionID];
+        require(allDonationTransaction.supplyStatus == BloodSupplyStatus.Available, "This transaction is not Available");
+
         donationTransaction.requester = requester_;
         donationTransaction.supplyStatus = BloodSupplyStatus.Requested;
         donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
@@ -473,10 +481,11 @@ contract BloodDonationBlockchainSystem is AccessControl {
         allDonationTransactions[_transactionID] = donationTransaction;
     }
 
-    function approvalBloodSupplied(uint256 _transactionID, address _medicalCenterPublicAddress, address transporterAddress_ ) external {
+    function approvalBloodSupplied(uint256 _transactionID, address _medicalCenterPublicAddress, address transporterAddress_ ) external onlyMedicalStaff {
 
         DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
         DonationTransaction storage allDonationTransaction = allDonationTransactions[_transactionID];
+        require(allDonationTransaction.supplyStatus == BloodSupplyStatus.Requested, "This transaction should be requested first");
 
         donationTransaction.transporter = transporterAddress_;
         donationTransaction.supplyStatus = BloodSupplyStatus.Approved;
@@ -485,7 +494,7 @@ contract BloodDonationBlockchainSystem is AccessControl {
         allDonationTransaction.transporter = transporterAddress_;
         allDonationTransaction.supplyStatus = BloodSupplyStatus.Approved;
         allDonationTransactions[_transactionID] = donationTransaction;
-
+        transportContract.updateTransportationHistory(transporterAddress_, _transactionID);
     }
 
     function supply(address _medicalCenterPublicAddress, uint256 _transactionID) external {

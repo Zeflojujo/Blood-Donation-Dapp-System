@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Home from "./+homedirectory/pages/Home";
@@ -13,6 +13,7 @@ import {
   displayMedicalCenters,
   displayMedicalRecord,
   displayRecipients,
+  displayTransporterDonationTransfer,
   displayTransporters,
   isWallectConnected,
 } from "./BlockchainService";
@@ -37,11 +38,15 @@ import MCDashboard from "./medicalcenter/pages/MCDashboard";
 import DSDashboard from "./damuSalama/pages/DSDashboard";
 import DonationTransactionRecord from "./Donor/pages/DonationTransactionRecord";
 import TransDashboard from "./transporter/pages/TransDashboard";
-import InitiateTransportation from "./transporter/pages/InitiateTransportation";
 import DSRegisterCollectionPoint from "./damuSalama/pages/DSRegisterCollectionPoint";
 import Recipients from "./medicalcenter/pages/Recipients";
+import { useGlobalState } from "./store";
+import TransferedDonationTransaction from "./transporter/pages/TransferedDonationTransaction";
 
 function App() {
+  const [connectedAccount] = useGlobalState("connectedAccount")
+  const [connctAccount, setConntAccount] = useState("")
+
   useEffect(() => {
     const isConnected = async () => {
       await isWallectConnected();
@@ -55,9 +60,14 @@ function App() {
       await displayCollectionPoints();
       await displayBloodSupplied();
       await displayRecipients();
+      await displayTransporterDonationTransfer();
     };
     isConnected();
-  }, []);
+  }, [connectedAccount, connctAccount]);
+
+  useEffect(()=> {
+    setConntAccount(connectedAccount)
+  })
 
   return (
     <Router>
@@ -108,8 +118,8 @@ function App() {
         <Route path="/transporter/login" element={<TransLogin />} />
         <Route path="/transporter/dashboard" element={<TransDashboard />} />
         <Route
-          path="/transporter/initiate-transportation"
-          element={<InitiateTransportation />}
+          path="/transporter/transfered-transaction"
+          element={<TransferedDonationTransaction />}
         />
 
         {/* Collection Point Routes */}

@@ -23,6 +23,7 @@ const CPRegisterDonor = () => {
   const [publicAddress, setPublicAddress] = useState('')
   const [name, setName] = useState('')
   const [age, setAge] = useState('')
+  const [weight, setWeight] = useState('')
   const [gender, setGender] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
 
@@ -37,7 +38,7 @@ const CPRegisterDonor = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!publicAddress || !name || !age || !gender || !phoneNumber) return
+    if (!publicAddress || !name || !weight || !age || !gender || !phoneNumber) return
 
     setGlobalState('modal', 'scale-0')
     setGlobalState('loading', { show: true, msg: 'Registering donor...' })
@@ -46,7 +47,7 @@ const CPRegisterDonor = () => {
 
       setLoadingMsg('Intializing transaction...')
       const password = "12345678"
-      const result = await addDonor({ publicAddress, name, age, gender, phoneNumber, password })
+      const result = await addDonor({ publicAddress, name, age, weight, gender, phoneNumber, password })
 
       if (result) {
         resetForm()
@@ -70,11 +71,12 @@ const CPRegisterDonor = () => {
   }
 
   const resetForm = () => {
-    setPublicAddress('')
-    setName('')
+    setPublicAddress("")
+    setName("")
     setAge("")
+    setWeight("")
     setGender("")
-    setPhoneNumber('')
+    setPhoneNumber("")
   }
 
   return (
@@ -174,6 +176,18 @@ const CPRegisterDonor = () => {
                     placeholder="age"
                     onChange={(e) => setAge(e.target.value)}
                     value={age}
+                    required
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <input
+                    className="mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                    type="number"
+                    name="weight"
+                    placeholder="weight"
+                    onChange={(e) => setWeight(e.target.value)}
+                    value={weight}
                     required
                   />
                 </div>

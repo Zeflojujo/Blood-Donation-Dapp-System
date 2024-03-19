@@ -83,6 +83,7 @@ const DonorTable = () => {
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">Public Address</th>
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">Name</th>
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">Age</th>
+                <th className="py-2 px-4 border-b text-center text-lg uppercase">Weight</th>
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">Gender</th>
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">Phone Number</th>
                 <th className="py-2 px-4 border-b text-center text-lg uppercase">Blood-Type</th>
@@ -111,6 +112,7 @@ const DonorTable = () => {
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.publicAddress}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.name}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.age.toString()}</td>
+                    <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.weight.toString()}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.gender}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.phoneNumber}</td>
                     <td className={`py-2 px-4 text-gray-700 text-base text-center border-b dark:text-gray-500 ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donor.bloodType}</td>

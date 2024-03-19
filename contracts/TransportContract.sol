@@ -11,11 +11,18 @@ contract TransportContract is AccessControl {
         string password;
         bool isRegistered;
         bool isLogin;
+        uint256[] transporterTransactionHistory;
     }
 
     mapping(address => Transporter) public transporters;
 
     address[] public transporterAddressArr;
+
+    function updateTransportationHistory(address _transporterAddress, uint256 _transactionID) external {
+        Transporter storage transporter = transporters[_transporterAddress];
+        transporter.transporterTransactionHistory.push(_transactionID);
+        transporters[_transporterAddress] = transporter;
+    }
 
     function addTransporter(
         address _transporterPublicAddress,
@@ -33,7 +40,8 @@ contract TransportContract is AccessControl {
             phoneNumber: _contactNumber,
             password: _password,
             isRegistered: true,
-            isLogin: false
+            isLogin: false,
+            transporterTransactionHistory: new uint256[](0)
         });
         transporterAddressArr.push(_transporterPublicAddress);
     }

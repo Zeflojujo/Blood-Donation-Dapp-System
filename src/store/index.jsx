@@ -12,6 +12,7 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   donors: [],
   recipients: [],
   donorTransactionHistory: [],
+  transporterTransactionHistory: [],
   collectionPoints: [],
   transporters: [],
   transporterName: "",
