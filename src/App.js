@@ -70,7 +70,7 @@ function App() {
   useEffect(()=> {
     setConntAccount(connectedAccount);
     setMedicalCenter(medicalCenters);
-  },[])
+  })
 
   return (
     <Router>

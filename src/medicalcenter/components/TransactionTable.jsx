@@ -533,7 +533,7 @@ const TransactionTable = () => {
           justify-center bg-black bg-opacity-50 transform
           transition-transform duration-300 ${modal3}`}
       >
-        <div className="shadow-xl rounded-xl w-11/12 md:w-2/5 h-7/12 p-6 bg-gray-100 shadow-orange-400 dark:bg-[#151c25] dark:shadow-[#e32970]">
+        <div className="shadow-xl rounded-xl w-11/12 md:w-2/5 h-7/12 p-6 bg-gray-100 shadow-blue-400 dark:bg-[#151c25] dark:shadow-[#e32970]">
 
           <form className="flex flex-col" onSubmit={handleSupplyBlood}>
             <div className="flex flex-row justify-between items-center">
@@ -541,13 +541,6 @@ const TransactionTable = () => {
               <h2 className="flex justify-center mx-auto w-full items-center text-red-500 rounded-full text-1xl md:text-3xl font-bold mt-4 pt-3">
                 <FaRegTimesCircle className="text-red-400 text-5xl" />
               </h2>
-              <button
-                type="button"
-                onClick={closeModal3}
-                className="border-0 bg-transparent focus:outline-none"
-              >
-                <FaTimes className="text-gray-400" />
-              </button>
             </div>
 
             <div className="mt-4">
@@ -571,12 +564,12 @@ const TransactionTable = () => {
               </span>
             </div>
 
-            <div className="flex gap-8">
+            <div className="flex gap-2">
 
               <button
                 type="submit"
-                className="flex gap-1 items-center text-white justify-center bg-orange-400 hover:bg-orange-500 
-              focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-lg px-5 
+                className="w-3/4 flex gap-1 items-center text-white justify-center bg-blue-500 hover:bg-blue-600 
+              focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 
               py-2.5 text-center me-2 dark:bg-[#e32970] dark:hover:bg-[#bd255f] 
               dark:focus:ring-[#bd255f] inline-flex items-center w-full mt-5"
               >
@@ -586,10 +579,10 @@ const TransactionTable = () => {
               <button
                 type="button"
                 onClick={closeModal3}
-                className="flex items-center gap-1 text-white justify-center bg-blue-400 hover:bg-blue-500 
-              focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 
-              py-2.5 text-center me-2 dark:bg-[#e32970] dark:hover:bg-[#bd255f] 
-              dark:focus:ring-[#bd255f] inline-flex items-center w-full mt-5"
+                className="w-1/4 flex items-center gap-1 text-white justify-center bg-orange-400 hover:bg-orange-500 
+              focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-lg px-5 
+              py-2.5 text-center me-2 dark:bg-orange-400 dark:hover:bg-orange-500 
+              dark:focus:ring-orange-300 inline-flex items-center w-full mt-5"
               >
                 <TbAdjustmentsCancel size={17} />
                 Cancel
