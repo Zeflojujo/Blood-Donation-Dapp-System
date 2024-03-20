@@ -1,13 +1,13 @@
 import React from "react"
 // import { FaAngleLeft } from "react-icons/fa6";
 import { MdBloodtype, MdDashboard } from "react-icons/md"
-import { FaChartPie } from "react-icons/fa"
+import { FaBed, FaBookMedical } from "react-icons/fa"
 import { FaUser } from "react-icons/fa"
-import { FaWineBottle } from "react-icons/fa"
-import { BsDatabaseFillAdd, BsQrCode } from "react-icons/bs"
 import { IoIosArrowForward } from "react-icons/io"
+import { TbTopologyStar3 } from "react-icons/tb";
 import { FaKeycdn } from "react-icons/fa6"
-import { NavLink } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
+import { IoSettingsSharp } from "react-icons/io5"
 // import "./Sidebar.css"
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -23,9 +23,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             icon: <FaKeycdn />,
         },
         // { title: "Blood Checking", link: "/medical-center/donate-blood-to-medicalcenter", icon: <FaKeycdn /> },
-        { title: "Medical Records", link: "/medical-center/medical-records", icon: <FaChartPie /> },
-        { title: "Recipients", link: "/medical-center/recipients", icon: <FaChartPie /> },
-        { title: "Blood Supplied", link: "/medical-center/blood-supplied", icon: <FaChartPie /> },
+        { title: "Medical Records", link: "/medical-center/medical-records", icon: <FaBookMedical /> },
+        { title: "Recipients", link: "/medical-center/recipients", icon: <FaBed /> },
+        { title: "Blood Supplied", link: "/medical-center/blood-supplied", icon: <TbTopologyStar3 /> },
     ]
 
     return (
@@ -47,31 +47,40 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         Damu Salama
                     </h1>
                 </div>
-                <ul className="pt-6 mr-0">
-                    {Menus.map((menu, index) => (
-                        <li
-                            className={`text-gray-300 text-md flex items-center gap-x-4 hover:font-semibold hover:text-purple-800
+                <div className="flex flex-col justify-between mb-0 h-[90%]">
+                    <ul className="pt-6 mr-0">
+                        {Menus.map((menu, index) => (
+                            <li
+                                className={`text-gray-300 text-md flex items-center gap-x-4 hover:font-semibold hover:text-purple-800
                     cursor-pointer py-1 rounded-md ${menu.gap ? "mt-9" : "mt-2"
-                                } dark:text-gray-500`}
-                            key={index}
-                        >
-                            <NavLink
-                                to={`${menu.link}`}
-                                className={` flex w-full gap-x-4 items-center text-gray-200 px-5 py-3 dark:text-gray-400 hover:text-blue-600 hover:font-semibold origin-left duration-300`}
+                                    } dark:text-gray-500`}
+                                key={index}
                             >
-                                <span className="text-2xl ">{menu.icon}</span>
-                                <span className={`${!isOpen && "hidden"}`}>{menu.title}</span>
-                                {menu.dropdown ? (
-                                    <div className={`${!isOpen ? "" : "pl-20"}`}>
-                                        <IoIosArrowForward />
-                                    </div>
-                                ) : (
-                                    ""
-                                )}
-                            </NavLink>
-                        </li>
-                    ))}
-                </ul>
+                                <NavLink
+                                    to={`${menu.link}`}
+                                    className={` flex w-full gap-x-4 items-center text-gray-200 px-5 py-3 dark:text-gray-400 dark:hover:text-gray-600 hover:text-gray-600 hover:font-semibold origin-left duration-300`}
+                                >
+                                    <span className="text-2xl ">{menu.icon}</span>
+                                    <span className={`${!isOpen && "hidden"}`}>{menu.title}</span>
+                                    {menu.dropdown ? (
+                                        <div className={`${!isOpen ? "" : "pl-20"}`}>
+                                            <IoIosArrowForward />
+                                        </div>
+                                    ) : (
+                                        ""
+                                    )}
+                                </NavLink>
+                            </li>
+                        ))}
+                    </ul>
+                    <li>
+                        <Link className={` flex w-full gap-x-4 items-center text-gray-200 px-5 py-3 dark:text-gray-400 hover:text-gray-600 hover:font-semibold origin-left duration-300`}>
+                            <span ><IoSettingsSharp size={25} /></span>
+                            <span className={`${!isOpen && "hidden"}`}>Settings</span>
+                        </Link>
+                    </li>
+                </div>
+
             </div>
         </div>
     )

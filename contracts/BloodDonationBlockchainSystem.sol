@@ -214,7 +214,7 @@ contract BloodDonationBlockchainSystem is AccessControl {
             string memory donorName,
             address recipientPublicAddress,
             address medicalStaff,
-            address requester,
+            string memory requester,
             bool isSupplied,
             BloodSupplyStatus supplyStatus,
             string memory medicalCenterName,
@@ -232,7 +232,7 @@ contract BloodDonationBlockchainSystem is AccessControl {
         donorName = donorContract.readDonors(donationTransaction.donor).name;
         recipientPublicAddress = donationTransaction.recipient;
         medicalStaff = donationTransaction.medicalStaff;
-        requester = donationTransaction.requester;
+        requester = medicalCenter.readMedicalCenter(donationTransaction.requester).name;
         isSupplied = donationTransaction.isSupplied;
         supplyStatus = donationTransaction.supplyStatus;
         transporterPublicAddress = donationTransaction.transporter;
@@ -469,43 +469,34 @@ contract BloodDonationBlockchainSystem is AccessControl {
 
     function requestBloodSupply(uint256 _transactionID, address _medicalCenterPublicAddress , address requester_) external onlyMedicalStaff {
         DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
-        DonationTransaction storage allDonationTransaction = allDonationTransactions[_transactionID];
-        require(allDonationTransaction.supplyStatus == BloodSupplyStatus.Available, "This transaction is not Available");
+        require(allDonationTransactions[_transactionID].supplyStatus == BloodSupplyStatus.Available, "This transaction is not Available");
 
         donationTransaction.requester = requester_;
         donationTransaction.supplyStatus = BloodSupplyStatus.Requested;
-        donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
 
-        allDonationTransaction.requester = requester_;
-        allDonationTransaction.supplyStatus = BloodSupplyStatus.Requested;
+        donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
         allDonationTransactions[_transactionID] = donationTransaction;
     }
 
     function approvalBloodSupplied(uint256 _transactionID, address _medicalCenterPublicAddress, address transporterAddress_ ) external onlyMedicalStaff {
 
         DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
-        DonationTransaction storage allDonationTransaction = allDonationTransactions[_transactionID];
-        require(allDonationTransaction.supplyStatus == BloodSupplyStatus.Requested, "This transaction should be requested first");
+        require(allDonationTransactions[_transactionID].supplyStatus == BloodSupplyStatus.Requested, "This transaction should be requested first");
 
         donationTransaction.transporter = transporterAddress_;
         donationTransaction.supplyStatus = BloodSupplyStatus.Approved;
-        donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
 
-        allDonationTransaction.transporter = transporterAddress_;
-        allDonationTransaction.supplyStatus = BloodSupplyStatus.Approved;
+        donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
         allDonationTransactions[_transactionID] = donationTransaction;
         transportContract.updateTransportationHistory(transporterAddress_, _transactionID);
     }
 
     function supply(address _medicalCenterPublicAddress, uint256 _transactionID) external {
-        DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
-        DonationTransaction storage allDonationTransaction = allDonationTransactions[_transactionID];
+        //DonationTransaction storage donationTransaction = donationTransactions[_medicalCenterPublicAddress][_transactionID];
 
-        donationTransaction.isSupplied = true;
-        donationTransactions[_medicalCenterPublicAddress][_transactionID] = donationTransaction;
-
-        allDonationTransaction.isSupplied = true;
-        allDonationTransactions[_transactionID] = donationTransaction;
+        //donationTransaction.isSupplied = true;
+        donationTransactions[_medicalCenterPublicAddress][_transactionID].isSupplied = true;
+        allDonationTransactions[_transactionID].isSupplied = true;
 
     }
 

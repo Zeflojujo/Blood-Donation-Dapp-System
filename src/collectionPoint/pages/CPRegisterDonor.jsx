@@ -52,8 +52,6 @@ const CPRegisterDonor = () => {
       if (result) {
         resetForm()
         setAlert('Registration completed...', 'green')
-        window.location.reload()
-
       } else {
         throw Error
       }

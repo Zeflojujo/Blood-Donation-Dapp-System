@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 // import swal from 'sweetalert';
 import { setAlert, setGlobalState, setLoadingMsg, truncate, useGlobalState } from '../../store'
-import { FaTimes } from 'react-icons/fa';
+import { FaFillDrip, FaRegTimesCircle, FaTimes } from 'react-icons/fa';
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { TbAdjustmentsCancel, TbTopologyStar3 } from "react-icons/tb";
+import { FcCancel } from "react-icons/fc";
 import Alert from '../../+homedirectory/components/Alert';
 import Loading from '../../+homedirectory/components/Loding';
 import { fullFillBloodToRecipient, completeDonationTransactions, supplyBlood } from '../../BlockchainService';
@@ -13,6 +16,7 @@ const TransactionTable = () => {
   const [transactionId] = useGlobalState("transactionId");
   const [modal] = useGlobalState('modal')
   const [modal2] = useGlobalState('modal2')
+  const [modal3] = useGlobalState('modal3')
   const [hoveredRow, setHoveredRow] = useState(null);
   const [allDonationTransaction, setAllDonationTransaction] = useState([])
   const [end, setEnd] = useState(5)
@@ -48,6 +52,11 @@ const TransactionTable = () => {
     resetForm()
   }
 
+  const closeModal3 = () => {
+    setGlobalState('modal3', 'scale-0')
+    resetForm()
+  }
+
   const handleCompleteTransaction = async (e) => {
     e.preventDefault()
 
@@ -64,7 +73,7 @@ const TransactionTable = () => {
       if (result) {
         resetForm()
         setAlert('Blood Test is completed...', 'green')
-        window.location.reload()
+        // window.location.reload()
 
       } else {
         throw Error
@@ -92,8 +101,7 @@ const TransactionTable = () => {
       if (result) {
         resetForm()
         setAlert('Blood is fullfillied to recipient...!!', 'green')
-        window.location.reload()
-
+        // window.location.reload()
       } else {
         throw Error
       }
@@ -109,7 +117,7 @@ const TransactionTable = () => {
 
     if (!transactionId) return
 
-    // setGlobalState('modal2', 'scale-0')
+    setGlobalState('modal3', 'scale-0')
     setGlobalState('loading', { show: true, msg: 'Blood Supply...' })
 
     try {
@@ -120,7 +128,7 @@ const TransactionTable = () => {
       if (result) {
         resetForm()
         setAlert('Blood is Supplied ...!!', 'green')
-        window.location.reload()
+        // window.location.reload()
 
       } else {
         throw Error
@@ -170,8 +178,8 @@ const TransactionTable = () => {
   }
 
   const supplyBloodTransaction = async (e, _transactionID) => {
+    setGlobalState('modal3', 'scale-100')
     setGlobalState('transactionId', _transactionID)
-    handleSupplyBlood(e);
   }
 
   return (
@@ -233,9 +241,9 @@ const TransactionTable = () => {
                     <td className={`py-2 px-4 text-gray-700 text-base border-b text-center dark:text-gray-500 uppercase ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}>{donation.bloodTestResult}</td>
 
                     {/* <td className={`w-20 py-2 px-4 text-gray-700 text-base border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button className='border border-solid bg-red-400 hover:bg-red-500 active:bg-red-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-red-500'>Delete</button></td> */}
-                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-cyan-400'>Complete</button></td>
-                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => FullFillDonationTransaction(donation.transactionID.toString())} className='border border-solid bg-purple-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-purple-400'>FullFill</button></td>
-                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={(e) => supplyBloodTransaction(e, donation.transactionID.toString())} className='border border-solid bg-orange-400 hover:bg-orange-600 active:bg-orange-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 dark:border-purple-400'>Supply</button></td>
+                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => completeDonationTransaction(donation.transactionID.toString())} className={`border border-solid bg-cyan-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 gap-1 flex items-center dark:border-cyan-400 ${donation.status.toString() !== "0" ? 'px-4 py-2 rounded-md cursor-not-allowed opacity-50' : ""}`} disabled={donation.status.toString() !== "0"}><IoMdCheckmarkCircleOutline size={17} />Complete</button></td>
+                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={() => FullFillDonationTransaction(donation.transactionID.toString())} className={`border border-solid bg-purple-400 hover:bg-cyan-600 active:bg-cyan-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 gap-1 flex items-center dark:border-purple-400 ${donation.status.toString() !== "1" ? 'px-4 py-2 rounded-md cursor-not-allowed opacity-50' : ""}`} disabled={donation.status.toString() !== "1"}><FaFillDrip size={17} />FullFill</button></td>
+                    <td className={`w-20 py-2 px-4 text-gray-700 text-base text-center border-b ${hoveredRow === index ? 'bg-gray-200 dark:bg-gray-900' : ''}`}><button onClick={(e) => supplyBloodTransaction(e, donation.transactionID.toString())} className={`border border-solid bg-orange-400 hover:bg-orange-600 active:bg-orange-400 px-3 py-1 border-r-2 text-white dark:bg-transparent dark:text-gray-500 gap-1 flex items-center dark:border-purple-400 ${donation.status.toString() !== "1" ? 'px-4 py-2 rounded-md cursor-not-allowed opacity-50' : ""}`} disabled={donation.status.toString() !== "1"}><TbTopologyStar3 size={17} />Supply</button></td>
                   </tr>
                 )))}
             </tbody>
@@ -513,6 +521,82 @@ const TransactionTable = () => {
             >
               Full Fill
             </button>
+          </form>
+
+        </div>
+      </div>
+
+      {/* Supply Blood */}
+
+      <div
+        className={`fixed top-0 left-0 w-screen h-screen flex items-center
+          justify-center bg-black bg-opacity-50 transform
+          transition-transform duration-300 ${modal3}`}
+      >
+        <div className="shadow-xl rounded-xl w-11/12 md:w-2/5 h-7/12 p-6 bg-gray-100 shadow-orange-400 dark:bg-[#151c25] dark:shadow-[#e32970]">
+
+          <form className="flex flex-col" onSubmit={handleSupplyBlood}>
+            <div className="flex flex-row justify-between items-center">
+              {/* <p className="font-semibold text-gray-400">Complete Blood Checking</p> */}
+              <h2 className="flex justify-center mx-auto w-full items-center text-red-500 rounded-full text-1xl md:text-3xl font-bold mt-4 pt-3">
+                <FaRegTimesCircle className="text-red-400 text-5xl" />
+              </h2>
+              <button
+                type="button"
+                onClick={closeModal3}
+                className="border-0 bg-transparent focus:outline-none"
+              >
+                <FaTimes className="text-gray-400" />
+              </button>
+            </div>
+
+            <div className="mt-4">
+              <input
+                className="hidden mt-1 px-3 py-1.5 md:py-2 w-full border dark:border-solid dark:border-gray-600 rounded-md dark:bg-transparent text-gray-700 bg-clip-padding"
+                type="text"
+                name="transactionID"
+                // onChange={(e) => setTransactionID(e.target.value)}
+                value={transactionId}
+                disabled
+                required
+              />
+            </div>
+
+            <div className="mt-4">
+              <span className="block text-1xl font-bold text-center font-medium text-gray-600 dark:text-gray-300">
+                Are you sure?
+              </span>
+              <span className="block text-[20px] mt-3 text-center font-medium text-gray-600 dark:text-gray-300">
+                You want to supply this blood
+              </span>
+            </div>
+
+            <div className="flex gap-8">
+
+              <button
+                type="submit"
+                className="flex gap-1 items-center text-white justify-center bg-orange-400 hover:bg-orange-500 
+              focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-lg px-5 
+              py-2.5 text-center me-2 dark:bg-[#e32970] dark:hover:bg-[#bd255f] 
+              dark:focus:ring-[#bd255f] inline-flex items-center w-full mt-5"
+              >
+                <TbTopologyStar3 size={17} />
+                Supply
+              </button>
+              <button
+                type="button"
+                onClick={closeModal3}
+                className="flex items-center gap-1 text-white justify-center bg-blue-400 hover:bg-blue-500 
+              focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 
+              py-2.5 text-center me-2 dark:bg-[#e32970] dark:hover:bg-[#bd255f] 
+              dark:focus:ring-[#bd255f] inline-flex items-center w-full mt-5"
+              >
+                <TbAdjustmentsCancel size={17} />
+                Cancel
+              </button>
+
+            </div>
+
           </form>
 
         </div>

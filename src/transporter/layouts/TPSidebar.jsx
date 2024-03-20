@@ -5,6 +5,7 @@ import { BsDatabaseFillAdd } from "react-icons/bs"
 import { IoIosArrowForward } from "react-icons/io"
 import { FaKeycdn } from "react-icons/fa6"
 import { NavLink } from "react-router-dom"
+import { TbArrowsTransferUp } from "react-icons/tb"
 // import "./CPSidebar.css"
 
 const TPSidebar = ({ isOpen, toggleSidebar }) => {
@@ -13,15 +14,15 @@ const TPSidebar = ({ isOpen, toggleSidebar }) => {
 
     const Menus = [
         { title: "Dashboard", link: "/transporter/dashboard", icon: <MdDashboard /> },
-        { title: "Transfered Transaction", link: "/transporter/transfered-transaction", icon: <BsDatabaseFillAdd /> },
+        { title: "Transfered Transaction", link: "/transporter/transfered-transaction", icon: <TbArrowsTransferUp /> },
         { title: "Complete Transportation", link: "/transporter/complete-transportation", icon: <FaKeycdn /> },
     ]
 
     return (
-        <div className="flex relative m-h-screen max-h-full">
+        <div className="flex relative h-full">
             <div
                 className={`self-start sticky32 top-0 inset-y-0 left-0 ${isOpen ? "w-72" : "w-20"
-                    } text-lg font-semibold h-screen duration-300 pt-8 bg-blue-600 dark:bg-[#212936] dark:shadow-md dark:shadow-gray-600`}
+                    } text-lg font-semibold h-full duration-300 pt-8 bg-blue-600 dark:bg-[#212936] dark:shadow-md dark:shadow-gray-600`}
             >
                 <div className="flex items-center border-b-2 border-b-gray-300 pb-3 border-opacity-35">
                     <span>
@@ -46,7 +47,7 @@ const TPSidebar = ({ isOpen, toggleSidebar }) => {
                         >
                             <NavLink
                                 to={`${menu.link}`}
-                                className={` flex w-full gap-x-4 items-center text-gray-200 px-5 py-3 dark:text-gray-400 hover:text-blue-600 hover:font-semibold origin-left duration-300`}
+                                className={` flex w-full gap-x-4 items-center text-gray-200 px-5 py-3 dark:text-gray-400 dark:hover:text-gray-600 hover:text-gray-600 hover:font-semibold origin-left duration-300`}
                             >
                                 <span className="text-2xl ">{menu.icon}</span>
                                 <span className={`${!isOpen && "hidden"}`}>{menu.title}</span>

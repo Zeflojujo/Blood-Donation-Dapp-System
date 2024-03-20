@@ -46,6 +46,8 @@ import TransferedDonationTransaction from "./transporter/pages/TransferedDonatio
 function App() {
   const [connectedAccount] = useGlobalState("connectedAccount")
   const [connctAccount, setConntAccount] = useState("")
+  const [medicalCenters] = useGlobalState("medicalCenters");
+  const [medicalCenter, setMedicalCenter] = useState("");
 
   useEffect(() => {
     const isConnected = async () => {
@@ -63,11 +65,12 @@ function App() {
       await displayTransporterDonationTransfer();
     };
     isConnected();
-  }, [connectedAccount, connctAccount]);
+  }, [connectedAccount, connctAccount, medicalCenter]);
 
   useEffect(()=> {
-    setConntAccount(connectedAccount)
-  })
+    setConntAccount(connectedAccount);
+    setMedicalCenter(medicalCenters);
+  },[])
 
   return (
     <Router>

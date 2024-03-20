@@ -682,11 +682,11 @@ const displayBloodSupplied = async () => {
       );
       if (
         _donationTransaction.bloodTestResult === "ACCEPTED" &&
-        _donationTransaction.status === 1n && _donationTransaction.supplyStatus !== 2n
+        _donationTransaction.status === 1n && _donationTransaction.supplyStatus !== 2n && _donationTransaction.isSupplied === true
       ) {
         donationTransactionData.push(_donationTransaction);
       }
-      // console.log("Donation Transaction :", _donationTransaction);
+      console.log("Supplied Transaction :", donationTransactionData);
     }
 
     setGlobalState("bloodSupplied", donationTransactionData);
@@ -799,6 +799,8 @@ const initiateDonationTransaction = async ({
 const completeDonationTransactions = async ({
   transactionId,
   bloodType,
+  HIV,
+  liverFever,
   bloodPressure,
   hemoglobinLevel,
   bloodTestResults,
@@ -813,6 +815,8 @@ const completeDonationTransactions = async ({
       .completeDonationToMedicalCenter(
         Number(transactionId),
         bloodType,
+        HIV,
+        liverFever,
         Number(bloodPressure),
         Number(hemoglobinLevel),
         bloodTestResults
@@ -904,12 +908,12 @@ const supplyBlood = async ({
     const contract = await getEtheriumContract();
     const account = getGlobalState("connectedAccount");
 
-    // console.log("am reach at this point");
+    console.log("blood supply transactionId", transactionId);
 
     await contract.methods
       .supply(
-        Number(transactionId),
         account,
+        Number(transactionId),
       )
       .send({ from: account, gas: 1000000 });
 

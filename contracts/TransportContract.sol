@@ -81,12 +81,14 @@ contract TransportContract is AccessControl {
         returns (
             address transporterPublicAddress,
             string memory name,
-            string memory phoneNumber
+            string memory phoneNumber,
+            uint256[] memory transporterTransactionHistory
         )
     {
         Transporter memory transporter = transporters[_transporterPublicAddress];
         transporterPublicAddress = transporter.transporterPublicAddress;
         name = transporter.name;
         phoneNumber = transporter.phoneNumber;
+        transporterTransactionHistory = transporter.transporterTransactionHistory;
     }
 }
